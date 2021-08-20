@@ -3,3 +3,4 @@
 String RPMTWProgressAPI =
     "https://raw.githubusercontent.com/RPMTW/RPMTW-website-data/main/data/progress.json";
 String HomePageUrl = "https://www.rpmtw.ga";
+String CrowdinBaseAPI = "https://api.crowdin.com/api/v2";

@@ -117,7 +117,7 @@ class ProgressCard_ extends State<ProgressCard> with TickerProviderStateMixin {
 
     controller = AnimationController(
         vsync: this,
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 800),
         upperBound: progress_)
       ..addListener(() {
         setState(() {});

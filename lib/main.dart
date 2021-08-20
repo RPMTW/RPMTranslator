@@ -4,10 +4,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:rpmtranslator/API/APIs.dart';
 import 'package:rpmtranslator/Account/Account.dart';
+import 'package:rpmtranslator/Widget/AccountNone.dart';
 
 import 'API/RPMTWData.dart';
 import 'Screen/Account.dart';
 import 'Screen/Progress.dart';
+import 'Screen/Translate.dart';
 import 'Utility/utility.dart';
 
 void main() {
@@ -114,12 +116,25 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width / 15,
+                  width: MediaQuery.of(context).size.width / 13,
                 ),
                 Transform.scale(
                   scale: 2,
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (Account.has() && !Account.expired()) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => TranslateScreen()));
+                      } else {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AccountNone();
+                            });
+                      }
+                    },
                     child: Row(
                       children: [
                         Icon(
