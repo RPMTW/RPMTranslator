@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Account/CrowdinAuth.dart';
+import 'package:rpmtranslator/Utility/utility.dart';
 
 import '../main.dart';
 
@@ -170,6 +171,14 @@ class AccountScreen_ extends State<AccountScreen> {
               tooltip: "關閉介面",
               onPressed: () {
                 Navigator.pop(context);
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.help_outline),
+              tooltip: "如何取得登入權杖?",
+              onPressed: () {
+                utility.OpenUrl(
+                    'https://www.rpmtw.ga/Wiki/ModInfo#crowdin-login-token');
               },
             )
           ],
