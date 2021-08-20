@@ -1,5 +1,8 @@
 // ignore_for_file: non_constant_identifier_names, unused_local_variable, file_names, avoid_print, prefer_const_constructors
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:rpmtranslator/Account/Account.dart';
 
 import 'Screen/Account.dart';
 
@@ -29,18 +32,26 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+  void initState() {
+    if (!Account.AccountFile.existsSync()) {
+      //如果不存在帳號檔案就建立一個
+      Account.AccountFile
+        ..createSync(recursive: true)
+        ..writeAsStringSync(json.encode({}));
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title), centerTitle: true, actions: [
         IconButton(
           icon: Icon(Icons.manage_accounts),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => AccountScreen()),
-            );
+            showDialog(context: context, builder: (context) => AccountScreen());
           },
-          tooltip: "Crowdin 帳號",
+          tooltip: "登入帳號",
         ),
       ]),
       body: Center(
