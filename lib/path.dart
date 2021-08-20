@@ -14,6 +14,9 @@ _getData() {
   } else if (Platform.isWindows) {
     home = envVars['UserProfile'];
     return join(home, "AppData", "Roaming");
+  } else {
+    home = envVars['UserProfile'];
+    return join(home);
   }
 }
 
@@ -27,6 +30,9 @@ _getConfig() {
   } else if (Platform.isWindows) {
     home = envVars['UserProfile'];
     return join(home, "AppData", "Local");
+  } else {
+    home = envVars['UserProfile'];
+    return join(home);
   }
 }
 

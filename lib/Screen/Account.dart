@@ -6,7 +6,6 @@ import 'package:rpmtranslator/Account/CrowdinAuth.dart';
 import '../main.dart';
 
 class AccountScreen_ extends State<AccountScreen> {
-  late int choose_index;
   bool _obscureText = true;
 
   TextEditingController TokenController = TextEditingController();
