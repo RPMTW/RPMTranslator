@@ -1,0 +1,76 @@
+name: Build
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+    
+  workflow_dispatch:
+
+jobs:
+  Linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+         channel: beta
+      - run: sudo apt-get update
+      - run: sudo apt-get install ninja-build libgtk-3-dev libblkid-dev
+      - run: flutter config --enable-linux-desktop
+      - run: flutter build linux
+      - run: |
+          cd ${{ github.workspace }}/build/linux/x64/release/bundle
+          chmod +x rpmlauncher
+      - name: "Upload Artifact"
+        uses: actions/upload-artifact@v1
+        with:
+          name: RPMLauncher-${{ github.run_number }}-linux
+          path: ${{ github.workspace }}/build/linux/x64/release/bundle
+  Windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: beta
+      - run: flutter config --enable-windows-desktop
+      - run: flutter build windows
+      - name: "Upload Artifact"
+        uses: actions/upload-artifact@v1
+        with:
+          name: RPMLauncher-${{ github.run_number }}-windows
+          path: ${{ github.workspace }}/build/windows/runner/Release      
+  # MacOS:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: subosito/flutter-action@v1
+  #       with:
+  #         channel: beta
+  #     - run: flutter config --enable-macos-desktop
+  #     - run: flutter build macos
+  #     - name: "Upload Artifact"
+  #       uses: actions/upload-artifact@v1
+  #       with:
+  #         name: RPMLauncher-${{ github.run_number }}-macos
+  #         path: ${{ github.workspace }}/build/macos/Build/Products/Release/App.framework/Versions/Current
+  Android:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-java@v1
+      with:
+        java-version: '12.x'
+    - uses: subosito/flutter-action@v1
+      with:
+          channel: 'beta'
+    - run: flutter build apk
+    - name: "Upload Artifact"
+      uses: actions/upload-artifact@v1
+      with:
+        name: RPMLauncher-${{ github.run_number }}-windows
+        path: ${{ github.workspace }}/build/app/outputs/flutter-apk
