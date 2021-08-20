@@ -59,4 +59,4 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: RPMTranslator-${{ github.run_number }}-Android
-        path: ${{ github.workspace }}/build/app/outputs/flutter-apk
+        path: ${{ github.workspace }}/build/app/outputs/flutter-apk/app-release.apk
