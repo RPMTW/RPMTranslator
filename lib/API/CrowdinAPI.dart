@@ -33,7 +33,7 @@ class CrowdinAPI {
     return data.containsKey('error') ? null : data['data'];
   }
 
-  static Future<List?> getModByVersion(
+  static Future<List?> getModsByVersion(
       String Token, String Version, String filter, int Page) async {
     int DirID = RPMTWDataHandler.VersionDirID[Version] ?? 33894;
     filter = filter == "" ? "" : "&filter=$filter";
@@ -41,6 +41,15 @@ class CrowdinAPI {
         "$CrowdinBaseAPI/projects/${RPMTWDataHandler.CrowdinID}/directories?directoryId=$DirID&offset=${Page * 20}&limit=20$filter";
     dynamic data = await baseGet(Token, url);
 
+    return data;
+  }
+
+   static Future<List?> getFilesByDir(
+      String Token, int DirID, String filter, int Page) async {
+    filter = filter == "" ? "" : "&filter=$filter";
+    String url =
+        "$CrowdinBaseAPI/projects/${RPMTWDataHandler.CrowdinID}/files?directoryId=$DirID&recursion&offset=${Page * 20}&limit=20$filter";
+    dynamic data = await baseGet(Token, url);
     return data;
   }
 }

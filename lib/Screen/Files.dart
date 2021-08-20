@@ -1,20 +1,18 @@
-// ignore_for_file: non_constant_identifier_names, unused_local_variable, file_names, avoid_print, prefer_const_constructors, unnecessary_new, camel_case_types, annotate_overrides, prefer_const_literals_to_create_immutables, prefer_equal_for_default_values, unused_element, avoid_unnecessary_containers, use_key_in_widget_constructors, sized_box_for_whitespace
+// ignore_for_file: non_constant_identifier_names, unused_local_variable, file_names, avoid_print, prefer_const_constructors, unnecessary_new, camel_case_types, annotate_overrides, prefer_const_literals_to_create_immutables, prefer_equal_for_default_values, unused_element, avoid_unnecessary_containers, use_key_in_widget_constructors, sized_box_for_whitespace, no_logic_in_create_state
 import 'package:flutter/material.dart';
 import 'package:rpmtranslator/API/CrowdinAPI.dart';
-import 'package:rpmtranslator/API/RPMTWData.dart';
 import 'package:rpmtranslator/Account/Account.dart';
-import 'package:rpmtranslator/Screen/Files.dart';
 import 'package:rpmtranslator/Widget/AccountNone.dart';
 
-import '../main.dart';
-
-class TranslateScreen_ extends State<TranslateScreen> {
+class FilesScreen_ extends State<FilesScreen> {
   final TextEditingController SearchController = TextEditingController();
-  final ScrollController ModScrollController = ScrollController();
-  final PageController ModPageController = PageController(initialPage: 0);
-  final List<String> VersionItems = RPMTWDataHandler.VersionItems;
-  String VersionItem = "1.17";
-  int ModListLength = 0;
+  final ScrollController FilesScrollController = ScrollController();
+  final PageController FilesPageController = PageController(initialPage: 0);
+  int FilesListLength = 0;
+
+  final int DirID;
+
+  FilesScreen_({required this.DirID});
 
   @override
   void initState() {
@@ -29,15 +27,12 @@ class TranslateScreen_ extends State<TranslateScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("模組翻譯頁面"),
+        title: Text("檔案選擇頁面"),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           tooltip: "返回",
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => App()),
-            );
+            Navigator.pop(context);
           },
         ),
         centerTitle: true,
@@ -65,7 +60,7 @@ class TranslateScreen_ extends State<TranslateScreen> {
                 textAlign: TextAlign.center,
                 controller: SearchController,
                 decoration: InputDecoration(
-                  hintText: "請輸入模組ID",
+                  hintText: "請輸入檔案名稱",
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.lightBlue, width: 5.0),
                   ),
@@ -86,7 +81,7 @@ class TranslateScreen_ extends State<TranslateScreen> {
                     backgroundColor:
                         MaterialStateProperty.all(Colors.deepPurpleAccent)),
                 onPressed: () {
-                  ModPageController.animateToPage(0,
+                  FilesPageController.animateToPage(0,
                       curve: Curves.easeOut,
                       duration: const Duration(milliseconds: 300));
                   setState(() {});
@@ -97,41 +92,6 @@ class TranslateScreen_ extends State<TranslateScreen> {
                 ),
               ),
               SizedBox(
-                width: 12,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "遊戲版本",
-                    style: title_,
-                  ),
-                  DropdownButton<String>(
-                    value: VersionItem,
-                    style: TextStyle(color: Colors.white),
-                    onChanged: (String? newValue) {
-                      VersionItem = newValue.toString();
-                      ModPageController.animateToPage(0,
-                          curve: Curves.easeOut,
-                          duration: const Duration(milliseconds: 300));
-                      setState(() {});
-                    },
-                    items: VersionItems.map<DropdownMenuItem<String>>(
-                        (String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(
-                          value,
-                          textAlign: TextAlign.center,
-                          style: title_,
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-              SizedBox(
                 width: 30,
               ),
             ],
@@ -140,31 +100,26 @@ class TranslateScreen_ extends State<TranslateScreen> {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height / 1.3,
             child: PageView.builder(
-                controller: ModPageController,
+                controller: FilesPageController,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, int Page) {
                   return FutureBuilder(
-                      future: CrowdinAPI.getModsByVersion(Account.getToken(),
-                          VersionItem, SearchController.text, Page),
+                      future: CrowdinAPI.getFilesByDir(Account.getToken(),
+                          DirID, SearchController.text, Page),
                       builder: (context, AsyncSnapshot snapshot) {
                         if (snapshot.hasData && snapshot.data != null) {
                           return ListView.builder(
                               shrinkWrap: true,
-                              controller: ModScrollController,
+                              controller: FilesScrollController,
                               itemCount: snapshot.data.length,
                               itemBuilder: (context, int Index) {
-                                ModListLength = snapshot.data.length;
+                                FilesListLength = snapshot.data.length;
                                 Map data = snapshot.data[Index]['data'];
                                 String DirName = data['name'].toString();
                                 return ListTile(
                                   title: Text(DirName,
                                       textAlign: TextAlign.center),
-                                  onTap: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) =>
-                                            FilesScreen(DirID: data['id']));
-                                  },
+                                  onTap: () {},
                                 );
                               });
                         } else if (snapshot.hasData && snapshot.data == null) {
@@ -183,8 +138,8 @@ class TranslateScreen_ extends State<TranslateScreen> {
               IconButton(
                   tooltip: "上一頁",
                   onPressed: () {
-                    ModPageController.animateToPage(
-                        ModPageController.page!.toInt() - 1,
+                    FilesPageController.animateToPage(
+                        FilesPageController.page!.toInt() - 1,
                         curve: Curves.easeOut,
                         duration: const Duration(milliseconds: 300));
                   },
@@ -195,9 +150,9 @@ class TranslateScreen_ extends State<TranslateScreen> {
               IconButton(
                   tooltip: "下一頁",
                   onPressed: () {
-                    if (ModListLength < 20) return;
-                    ModPageController.animateToPage(
-                        ModPageController.page!.toInt() + 1,
+                    if (FilesListLength < 20) return;
+                    FilesPageController.animateToPage(
+                        FilesPageController.page!.toInt() + 1,
                         curve: Curves.easeOut,
                         duration: const Duration(milliseconds: 300));
                   },
@@ -210,7 +165,11 @@ class TranslateScreen_ extends State<TranslateScreen> {
   }
 }
 
-class TranslateScreen extends StatefulWidget {
+class FilesScreen extends StatefulWidget {
+  final int DirID;
+
+  const FilesScreen({required this.DirID});
+
   @override
-  TranslateScreen_ createState() => TranslateScreen_();
+  FilesScreen_ createState() => FilesScreen_(DirID: DirID);
 }
