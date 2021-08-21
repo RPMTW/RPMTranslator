@@ -2,11 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:rpmtranslator/API/CrowdinAPI.dart';
 import 'package:rpmtranslator/Account/Account.dart';
+import 'package:rpmtranslator/Utility/utility.dart';
 import 'package:rpmtranslator/Widget/AccountNone.dart';
 import 'package:split_view/split_view.dart';
 
 class TranslateScreen_ extends State<TranslateScreen> {
   final TextEditingController SearchController = TextEditingController();
+  final TextEditingController TranslateTextController = TextEditingController();
   final ScrollController TranslateScrollController = ScrollController();
   final PageController TranslatePageController = PageController(initialPage: 0);
   int TranslateListLength = 0;
@@ -15,7 +17,8 @@ class TranslateScreen_ extends State<TranslateScreen> {
   final String FileName;
   int SelectIndex = 0;
   int StringPage = 0;
-
+  Map SelectStringInfo = {};
+  late var setView2State;
   TranslateScreen_({required this.FileID, required this.FileName});
 
   @override
@@ -143,7 +146,9 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                             title: Text(SourceString),
                                             onTap: () {
                                               SelectIndex = index;
+                                              SelectStringInfo = StringInfo;
                                               setModListState(() {});
+                                              setView2State(() {});
                                             },
                                             tileColor: SelectIndex == index
                                                 ? Colors.white12
@@ -202,7 +207,208 @@ class TranslateScreen_ extends State<TranslateScreen> {
             ),
           ),
           Container(
-            child: Center(child: Text("翻譯界面")),
+            child: StatefulBuilder(builder: (context, setView2State_) {
+              setView2State = setView2State_;
+              return SplitView(
+                viewMode: SplitViewMode.Vertical,
+                gripSize: 3,
+                children: [
+                  Container(
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      child: Builder(builder: (context) {
+                        if (SelectStringInfo != {} &&
+                            SelectStringInfo.containsKey('text')) {
+                          TextStyle StringTitleStyle =
+                              TextStyle(fontSize: 25, color: Colors.blue);
+                          TextStyle StringStyle = TextStyle(fontSize: 25);
+                          return Column(
+                            children: [
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      utility.OpenUrl(
+                                          "https://crowdin.com/translate/resourcepack-mod-zhtw/all/en-zhtw?filter=basic&value=0#q=${SelectStringInfo['id']}");
+                                    },
+                                    icon: Icon(Icons.open_in_browser),
+                                    tooltip: "在 Crowdin 網站檢視此字串",
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      utility.OpenUrl(
+                                          "https://crowdin.com/project/resourcepack-mod-zhtw/activity-stream?lang=56&translation_id=${SelectStringInfo['id']}");
+                                    },
+                                    icon: Icon(Icons.history),
+                                    tooltip: "在 Crowdin 網站查看此字串的變更紀錄",
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text("原文:", style: StringTitleStyle),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(SelectStringInfo['text'],
+                                        style: StringStyle),
+                                  ]),
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text("語系鍵:", style: StringTitleStyle),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                        SelectStringInfo['context']
+                                            .toString()
+                                            .split("-> ")
+                                            .join(""),
+                                        style: StringStyle),
+                                  ]),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 15,
+                                  ),
+                                  Expanded(
+                                      child: TextField(
+                                    textAlign: TextAlign.center,
+                                    controller: TranslateTextController,
+                                    decoration: InputDecoration(
+                                      hintText: "請輸入譯文",
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.white12, width: 3.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.lightBlue,
+                                            width: 3.0),
+                                      ),
+                                      contentPadding: EdgeInsets.zero,
+                                      border: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                    ),
+                                  )),
+                                  SizedBox(
+                                    width: 15,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              ElevatedButton(
+                                style: new ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        Colors.deepPurpleAccent)),
+                                onPressed: () async {
+                                  Map? data =
+                                      await CrowdinAPI.getAddTranslation(
+                                          Account.getToken(),
+                                          SelectStringInfo['id'],
+                                          TranslateTextController.text);
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return FutureBuilder(
+                                            builder: (context, snapshot) {
+                                          if (snapshot.hasData) {
+                                            if (data != null &&
+                                                !data.containsKey('errors')) {
+                                              return AlertDialog(
+                                                title: Text("成功新增翻譯，感謝您的翻譯貢獻",
+                                                    textAlign:
+                                                        TextAlign.center),
+                                                actions: [
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text("確定"))
+                                                ],
+                                              );
+                                            } else if (data != null &&
+                                                data.containsKey('errors')) {
+                                              Map error = data['errors'][0]
+                                                  ['error']['errors'][0];
+                                              String errorMessage =
+                                                  error['message'];
+                                              String errorCode = error['code'];
+                                              return AlertDialog(
+                                                title: Text("新增翻譯失敗",
+                                                    textAlign:
+                                                        TextAlign.center),
+                                                content: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Text("錯誤代碼: $errorCode"),
+                                                    Text("錯誤訊息: $errorMessage")
+                                                  ],
+                                                ),
+                                                actions: [
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text("確定"))
+                                                ],
+                                              );
+                                            } else {
+                                              return AlertDialog(
+                                                title: Text("發生未知錯誤",
+                                                    textAlign:
+                                                        TextAlign.center),
+                                                actions: [
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text("確定"))
+                                                ],
+                                              );
+                                            }
+                                          } else {
+                                            return Center(
+                                                child:
+                                                    CircularProgressIndicator());
+                                          }
+                                        });
+                                      });
+                                },
+                                child: Text(
+                                  "提交翻譯",
+                                  style: title_,
+                                ),
+                              )
+                            ],
+                          );
+                        } else {
+                          return Container();
+                        }
+                      })),
+                  Container(
+                    child: Center(child: Text("View2")),
+                  ),
+                ],
+              );
+            }),
           ),
           Container(
             child: Center(child: Text("資料庫...")),

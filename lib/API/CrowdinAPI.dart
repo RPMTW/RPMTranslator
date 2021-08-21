@@ -25,12 +25,16 @@ class CrowdinAPI {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $Token'
     };
+    Response response = await http.post(Uri.parse(url),
+        headers: headers, body: json.encode(Json));
 
-    Map data = json.decode((await http.post(Uri.parse(url),
-            headers: headers, body: json.encode(Json)))
-        .body);
+    Map data = json.decode(response.body);
 
-    return data.containsKey('error') ? null : data['data'];
+    return response.statusCode == 400
+        ? data
+        : data.containsKey('error')
+            ? null
+            : data['data'];
   }
 
   static Future<List?> getModsByVersion(
@@ -44,7 +48,7 @@ class CrowdinAPI {
     return data;
   }
 
-   static Future<List?> getFilesByDir(
+  static Future<List?> getFilesByDir(
       String Token, int DirID, String filter, int Page) async {
     filter = filter == "" ? "" : "&filter=$filter";
     String url =
@@ -53,12 +57,24 @@ class CrowdinAPI {
     return data;
   }
 
-     static Future<List?> getSourceStringByFile(
+  static Future<List?> getSourceStringByFile(
       String Token, int FileID, String filter, int Page) async {
     filter = filter == "" ? "" : "&filter=$filter";
     String url =
         "$CrowdinBaseAPI/projects/${RPMTWDataHandler.CrowdinID}/strings?fileId=$FileID&offset=${Page * 20}&limit=20$filter";
     dynamic data = await baseGet(Token, url);
+    return data;
+  }
+
+  static Future<Map?> getAddTranslation(
+      String Token, int StringID, String text) async {
+    String url =
+        "$CrowdinBaseAPI/projects/${RPMTWDataHandler.CrowdinID}/translations";
+    dynamic data = await basePost(Token, url, {
+      "stringId": StringID,
+      "languageId": "zh-TW", //繁體中文
+      "text": text,
+    });
     return data;
   }
 }
