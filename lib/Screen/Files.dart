@@ -4,6 +4,8 @@ import 'package:rpmtranslator/API/CrowdinAPI.dart';
 import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Widget/AccountNone.dart';
 
+import 'Translate.dart';
+
 class FilesScreen_ extends State<FilesScreen> {
   final TextEditingController SearchController = TextEditingController();
   final ScrollController FilesScrollController = ScrollController();
@@ -125,7 +127,14 @@ class FilesScreen_ extends State<FilesScreen> {
                                   return ListTile(
                                     title: Text(FileName,
                                         textAlign: TextAlign.center),
-                                    onTap: () {},
+                                    onTap: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) => TranslateScreen(
+                                                FileID: data['id'],
+                                                FileName: FileName
+                                              ));
+                                    },
                                   );
                                 });
                           } else if (snapshot.hasData &&

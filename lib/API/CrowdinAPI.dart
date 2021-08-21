@@ -52,4 +52,13 @@ class CrowdinAPI {
     dynamic data = await baseGet(Token, url);
     return data;
   }
+
+     static Future<List?> getSourceStringByFile(
+      String Token, int FileID, String filter, int Page) async {
+    filter = filter == "" ? "" : "&filter=$filter";
+    String url =
+        "$CrowdinBaseAPI/projects/${RPMTWDataHandler.CrowdinID}/strings?fileId=$FileID&offset=${Page * 20}&limit=20$filter";
+    dynamic data = await baseGet(Token, url);
+    return data;
+  }
 }
