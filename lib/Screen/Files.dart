@@ -118,9 +118,12 @@ class FilesScreen_ extends State<FilesScreen> {
                                 itemBuilder: (context, int Index) {
                                   FilesListLength = snapshot.data.length;
                                   Map data = snapshot.data[Index]['data'];
-                                  String DirName = data['name'].toString();
+                                  String FileName = data['name'].toString();
+                                  FileName == "zh_tw.json"
+                                      ? FileName = "主要語系檔案"
+                                      : FileName;
                                   return ListTile(
-                                    title: Text(DirName,
+                                    title: Text(FileName,
                                         textAlign: TextAlign.center),
                                     onTap: () {},
                                   );
