@@ -36,7 +36,7 @@ class ProgressScreen_ extends State<ProgressScreen> {
       ),
       body: Center(
           child: FutureBuilder(
-              future: RPMTWDataHandler.getProgress(),
+              future: RPMTWData.getProgress(),
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   Size size = MediaQuery.of(context).size;

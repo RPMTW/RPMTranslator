@@ -7,13 +7,15 @@
         {
             "name": "rpmtranslator",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "externalConsole": true,
         },
         {
             "name": "rpmtranslator (profile mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "flutterMode": "profile",
+            "externalConsole": true,
         }
     ]
 }

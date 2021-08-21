@@ -20,29 +20,22 @@ class CrowdinAPI {
     return data.containsKey('error') ? null : data['data'];
   }
 
-  static Future<dynamic> basePost(String Token, String url, Map Json) async {
+  static Future<Response> basePost(String Token, String url, Map Json) async {
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $Token'
     };
     Response response = await http.post(Uri.parse(url),
         headers: headers, body: json.encode(Json));
-
-    Map data = json.decode(response.body);
-
-    return response.statusCode == 400
-        ? data
-        : data.containsKey('error')
-            ? null
-            : data['data'];
+    return response;
   }
 
   static Future<List?> getModsByVersion(
       String Token, String Version, String filter, int Page) async {
-    int DirID = RPMTWDataHandler.VersionDirID[Version] ?? 33894;
+    int DirID = RPMTWData.VersionDirID[Version] ?? 33894;
     filter = filter == "" ? "" : "&filter=$filter";
     String url =
-        "$CrowdinBaseAPI/projects/${RPMTWDataHandler.CrowdinID}/directories?directoryId=$DirID&offset=${Page * 20}&limit=20$filter";
+        "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/directories?directoryId=$DirID&offset=${Page * 20}&limit=20$filter";
     dynamic data = await baseGet(Token, url);
 
     return data;
@@ -52,7 +45,7 @@ class CrowdinAPI {
       String Token, int DirID, String filter, int Page) async {
     filter = filter == "" ? "" : "&filter=$filter";
     String url =
-        "$CrowdinBaseAPI/projects/${RPMTWDataHandler.CrowdinID}/files?directoryId=$DirID&recursion&offset=${Page * 20}&limit=20$filter";
+        "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/files?directoryId=$DirID&recursion&offset=${Page * 20}&limit=20$filter";
     dynamic data = await baseGet(Token, url);
     return data;
   }
@@ -61,28 +54,72 @@ class CrowdinAPI {
       String Token, int FileID, String filter, int Page) async {
     filter = filter == "" ? "" : "&filter=$filter";
     String url =
-        "$CrowdinBaseAPI/projects/${RPMTWDataHandler.CrowdinID}/strings?fileId=$FileID&offset=${Page * 20}&limit=20$filter";
+        "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/strings?fileId=$FileID&offset=${Page * 20}&limit=20$filter";
     dynamic data = await baseGet(Token, url);
     return data;
   }
 
   static Future<Map?> addTranslation(
       String Token, int StringID, String text) async {
-    String url =
-        "$CrowdinBaseAPI/projects/${RPMTWDataHandler.CrowdinID}/translations";
-    dynamic data = await basePost(Token, url, {
+    String url = "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/translations";
+    Response response = await basePost(Token, url, {
       "stringId": StringID,
-      "languageId": RPMTWDataHandler.TraditionalChineseTaiwan, //繁體中文
+      "languageId": RPMTWData.TraditionalChineseTaiwan, //繁體中文
       "text": text,
     });
-    return data;
+    Map data = json.decode(response.body);
+    return response.statusCode == 400
+        ? data
+        : data.containsKey('error')
+            ? null
+            : data['data'];
   }
 
   static Future<List?> getStringTranslations(
-      String Token, int StringID, int Page) async {
+      String Token, int StringID) async {
     String url =
-        "$CrowdinBaseAPI/projects/${RPMTWDataHandler.CrowdinID}/translations?stringId=$StringID&languageId=${RPMTWDataHandler.TraditionalChineseTaiwan}&offset=${Page * 20}&limit=20";
+        "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/translations?stringId=$StringID&languageId=${RPMTWData.TraditionalChineseTaiwan}&limit=20";
     dynamic data = await baseGet(Token, url);
+    return data;
+  }
+
+  static Future<double> getProgressByFile(String Token, int FileID) async {
+    String url =
+        "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/files/$FileID/languages/progress";
+    List data = await baseGet(Token, url);
+    Map Words = data[0]['data']['words'];
+    return Words['total'] == 0 && Words['translated'] == 0
+        ? 0
+        : Words['translated'] / Words['total'];
+  }
+
+  static Future<List?> getTranslationVotes(
+      String Token, int TranslationID, int StringID) async {
+    String url =
+        "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/votes/?translationId=$TranslationID&stringId=$StringID&languageId=${RPMTWData.TraditionalChineseTaiwan}";
+    dynamic data = await baseGet(Token, url);
+    return data;
+  }
+
+  static int prserVote(List Votes) {
+    int Num = 0;
+    Votes.forEach((Vote) {
+      if (Vote['data']['mark'] == "up") {
+        Num++;
+      } else if (Vote['data']['mark'] == "down") {
+        Num--;
+      }
+    });
+    return Num;
+  }
+
+  static Future<Map?> addVote(
+      String Token, int TranslationID, String mark) async {
+    String url = "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/votes";
+    Response response = await basePost(
+        Token, url, {"mark": mark, "translationId": TranslationID});
+    Map data = json.decode(response.body);
+
     return data;
   }
 }

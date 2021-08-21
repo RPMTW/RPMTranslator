@@ -1,16 +1,17 @@
 // ignore_for_file: non_constant_identifier_names, unused_local_variable, file_names, avoid_print, prefer_const_constructors, unnecessary_new, camel_case_types, annotate_overrides, prefer_const_literals_to_create_immutables, prefer_equal_for_default_values, unused_element, avoid_unnecessary_containers, use_key_in_widget_constructors, sized_box_for_whitespace, no_logic_in_create_state, curly_braces_in_flow_control_structures, unrelated_type_equality_checks
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:rpmtranslator/API/CrowdinAPI.dart';
+import 'package:rpmtranslator/API/RPMTWData.dart';
 import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Utility/utility.dart';
-import 'package:rpmtranslator/Widget/AccountNone.dart';
+import 'package:rpmtranslator/Widget/OkClose.dart';
 import 'package:split_view/split_view.dart';
 
 class TranslateScreen_ extends State<TranslateScreen> {
   final TextEditingController SearchController = TextEditingController();
   final TextEditingController TranslateTextController = TextEditingController();
-  final ScrollController TranslateScrollController = ScrollController();
   final PageController TranslatePageController = PageController(initialPage: 0);
   int TranslateListLength = 0;
 
@@ -35,7 +36,30 @@ class TranslateScreen_ extends State<TranslateScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("$FileName - 翻譯頁面"),
+          toolbarHeight: 80,
+          title: Column(
+            children: [
+              Text("$FileName - 翻譯頁面"),
+              FutureBuilder(
+                  future:
+                      CrowdinAPI.getProgressByFile(Account.getToken(), FileID),
+                  builder: (context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      return Column(
+                        children: [
+                          LinearProgressIndicator(
+                            color: Colors.blue,
+                            value: snapshot.data,
+                          ),
+                          Text((snapshot.data * 100).toStringAsFixed(2) + "%")
+                        ],
+                      );
+                    } else {
+                      return LinearProgressIndicator();
+                    }
+                  })
+            ],
+          ),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             tooltip: "返回",
@@ -147,6 +171,38 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                                   StringInfo['text'].toString();
 
                                               return ListTile(
+                                                leading: FutureBuilder(
+                                                    future: CrowdinAPI
+                                                        .getStringTranslations(
+                                                      Account.getToken(),
+                                                      StringInfo['id'],
+                                                    ),
+                                                    builder: (context,
+                                                        AsyncSnapshot
+                                                            snapshot) {
+                                                      if (snapshot.hasData) {
+                                                        if (snapshot
+                                                                .data.length >
+                                                            0) {
+                                                          return ColoredBox(
+                                                              color:
+                                                                  Colors.green,
+                                                              child: SizedBox(
+                                                                width: 20,
+                                                                height: 20,
+                                                              ));
+                                                        } else {
+                                                          return ColoredBox(
+                                                              color: Colors.red,
+                                                              child: SizedBox(
+                                                                width: 20,
+                                                                height: 20,
+                                                              ));
+                                                        }
+                                                      } else {
+                                                        return CircularProgressIndicator();
+                                                      }
+                                                    }),
                                                 title: Text(SourceString),
                                                 onTap: () {
                                                   SelectIndex = index;
@@ -234,329 +290,453 @@ class TranslateScreen_ extends State<TranslateScreen> {
               Container(
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
-                  child: Builder(builder: (context) {
-                    if (SelectStringInfo != {} &&
-                        SelectStringInfo.containsKey('text')) {
-                      return Column(
-                        children: [
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  utility.OpenUrl(
-                                      "https://crowdin.com/translate/resourcepack-mod-zhtw/all/en-zhtw?filter=basic&value=0#q=${SelectStringInfo['id']}");
-                                },
-                                icon: Icon(Icons.open_in_browser),
-                                tooltip: "在 Crowdin 網站檢視此字串",
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  utility.OpenUrl(
-                                      "https://crowdin.com/project/resourcepack-mod-zhtw/activity-stream?lang=56&translation_id=${SelectStringInfo['id']}");
-                                },
-                                icon: Icon(Icons.history),
-                                tooltip: "在 Crowdin 網站查看此字串的變更紀錄",
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                AutoSizeText("原文:",
-                                    style: TextStyle(
-                                        color: Colors.blue, fontSize: 25)),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                AutoSizeText(SelectStringInfo['text'],
-                                    style: TextStyle(fontSize: 25)),
-                              ]),
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                AutoSizeText("語系鍵:",
-                                    style: TextStyle(
-                                        color: Colors.blue, fontSize: 25)),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                AutoSizeText(
-                                    SelectStringInfo['context']
-                                        .toString()
-                                        .split("-> ")
-                                        .join(""),
-                                    style: TextStyle(fontSize: 20)),
-                              ]),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Expanded(
-                                  child: TextField(
-                                textAlign: TextAlign.center,
-                                controller: TranslateTextController,
-                                decoration: InputDecoration(
-                                  hintText: "請輸入譯文",
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.white12, width: 3.0),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.lightBlue, width: 3.0),
-                                  ),
-                                  contentPadding: EdgeInsets.zero,
-                                  border: InputBorder.none,
-                                  errorBorder: InputBorder.none,
-                                  disabledBorder: InputBorder.none,
-                                ),
-                              )),
-                              SizedBox(
-                                width: 15,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          ElevatedButton(
-                            style: new ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    Colors.deepPurpleAccent)),
-                            onPressed: () async {
-                              showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (context) {
-                                    return FutureBuilder(
-                                        future: CrowdinAPI.addTranslation(
-                                            Account.getToken(),
-                                            SelectStringInfo['id'],
-                                            TranslateTextController.text),
-                                        builder: (context,
-                                            AsyncSnapshot<Map?> snapshot) {
-                                          if (snapshot.hasData) {
-                                            Map? data = snapshot.data;
-                                            if (data != null &&
-                                                !data.containsKey('errors')) {
-                                              return AlertDialog(
-                                                title: Text("成功新增翻譯，感謝您的翻譯貢獻",
-                                                    textAlign:
-                                                        TextAlign.center),
-                                                actions: [
-                                                  TextButton(
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                        setView2State(() {});
-                                                      },
-                                                      child: Text("確定"))
-                                                ],
-                                              );
-                                            } else if (data != null &&
-                                                data.containsKey('errors')) {
-                                              Map error = data['errors'][0]
-                                                  ['error']['errors'][0];
-                                              String errorMessage =
-                                                  error['message'];
-                                              String errorCode = error['code'];
-                                              return AlertDialog(
-                                                title: Text("新增翻譯失敗",
-                                                    textAlign:
-                                                        TextAlign.center),
-                                                content: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Text("錯誤代碼: $errorCode"),
-                                                    Text("錯誤訊息: $errorMessage")
-                                                  ],
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Text("確定"))
-                                                ],
-                                              );
-                                            } else {
-                                              return AlertDialog(
-                                                title: Text("發生未知錯誤",
-                                                    textAlign:
-                                                        TextAlign.center),
-                                                actions: [
-                                                  TextButton(
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Text("確定"))
-                                                ],
-                                              );
-                                            }
-                                          } else {
-                                            return Center(
-                                                child:
-                                                    CircularProgressIndicator());
-                                          }
-                                        });
-                                  });
-                            },
-                            child: Text(
-                              "提交翻譯",
-                              style: title_,
+                  child: SingleChildScrollView(
+                    controller: ScrollController(),
+                    child: Builder(builder: (context) {
+                      if (SelectStringInfo != {} &&
+                          SelectStringInfo.containsKey('text')) {
+                        return Column(
+                          children: [
+                            SizedBox(
+                              height: 15,
                             ),
-                          )
-                        ],
-                      );
-                    } else {
-                      return Container();
-                    }
-                  })),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    utility.OpenUrl(
+                                        "https://crowdin.com/translate/resourcepack-mod-zhtw/all/en-zhtw?filter=basic&value=0#q=${SelectStringInfo['id']}");
+                                  },
+                                  icon: Icon(Icons.open_in_browser),
+                                  tooltip: "在 Crowdin 網站檢視此字串",
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    utility.OpenUrl(
+                                        "https://crowdin.com/project/resourcepack-mod-zhtw/activity-stream?lang=56&translation_id=${SelectStringInfo['id']}");
+                                  },
+                                  icon: Icon(Icons.history),
+                                  tooltip: "在 Crowdin 網站查看此字串的變更紀錄",
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    Clipboard.setData(ClipboardData(
+                                        text: SelectStringInfo['text']));
+                                  },
+                                  icon: Icon(Icons.copy_outlined),
+                                  tooltip: "複製原文",
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            AutoSizeText("原文",
+                                style: TextStyle(
+                                    color: Colors.blue, fontSize: 20)),
+                            AutoSizeText(
+                              SelectStringInfo['text'],
+                            ),
+                            AutoSizeText("語系鍵",
+                                style: TextStyle(
+                                    color: Colors.blue, fontSize: 20)),
+                            AutoSizeText(
+                              SelectStringInfo['context']
+                                  .toString()
+                                  .split("-> ")
+                                  .join(""),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                Expanded(
+                                    child: TextField(
+                                  textAlign: TextAlign.center,
+                                  controller: TranslateTextController,
+                                  decoration: InputDecoration(
+                                    hintText: "請輸入譯文",
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.white12, width: 3.0),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.lightBlue, width: 3.0),
+                                    ),
+                                    contentPadding: EdgeInsets.zero,
+                                    border: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                  ),
+                                )),
+                                SizedBox(
+                                  width: 15,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            ElevatedButton(
+                              style: new ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Colors.deepPurpleAccent)),
+                              onPressed: () async {
+                                showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (context) =>
+                                        Builder(builder: (context) {
+                                          if (TranslateTextController
+                                              .text.isEmpty) {
+                                            return AlertDialog(
+                                              title: Text("新增翻譯失敗",
+                                                  textAlign: TextAlign.center),
+                                              content: Text("譯文不能是空的"),
+                                              actions: [
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text("確定"))
+                                              ],
+                                            );
+                                          } else {
+                                            return FutureBuilder(
+                                                future:
+                                                    CrowdinAPI.addTranslation(
+                                                        Account.getToken(),
+                                                        SelectStringInfo['id'],
+                                                        TranslateTextController
+                                                            .text),
+                                                builder: (context,
+                                                    AsyncSnapshot<Map?>
+                                                        snapshot) {
+                                                  if (snapshot.hasData) {
+                                                    Map? data = snapshot.data;
+                                                    if (data != null &&
+                                                        !data.containsKey(
+                                                            'errors')) {
+                                                      return AlertDialog(
+                                                        title: Text(
+                                                            "成功新增翻譯，感謝您的翻譯貢獻",
+                                                            textAlign: TextAlign
+                                                                .center),
+                                                        actions: [
+                                                          TextButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                                setView2State(
+                                                                    () {});
+                                                              },
+                                                              child: Text("確定"))
+                                                        ],
+                                                      );
+                                                    } else if (data != null &&
+                                                        data.containsKey(
+                                                            'errors')) {
+                                                      Map error = data['errors']
+                                                              [0]['error']
+                                                          ['errors'][0];
+                                                      String errorMessage =
+                                                          error['message'];
+                                                      String errorCode =
+                                                          error['code'];
+                                                      return AlertDialog(
+                                                        title: Text("新增翻譯失敗",
+                                                            textAlign: TextAlign
+                                                                .center),
+                                                        content: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            Text(
+                                                                "錯誤代碼: $errorCode"),
+                                                            Text(
+                                                                "錯誤訊息: ${RPMTWData.TranslateErrorMessage(errorMessage)}")
+                                                          ],
+                                                        ),
+                                                        actions: [OkClose()],
+                                                      );
+                                                    } else {
+                                                      return AlertDialog(
+                                                        title: Text("發生未知錯誤",
+                                                            textAlign: TextAlign
+                                                                .center),
+                                                        actions: [OkClose()],
+                                                      );
+                                                    }
+                                                  } else {
+                                                    return Center(
+                                                        child:
+                                                            CircularProgressIndicator());
+                                                  }
+                                                });
+                                          }
+                                        }));
+                              },
+                              child: Text(
+                                "提交翻譯",
+                                style: title_,
+                              ),
+                            )
+                          ],
+                        );
+                      } else {
+                        return Container();
+                      }
+                    }),
+                  )),
               SingleChildScrollView(
                 controller: ScrollController(),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text("其他翻譯", style: TextStyle(fontSize: 22)),
-                    Builder(builder: (context) {
-                      final ScrollController
-                          StringTranslationsScrollController =
-                          ScrollController();
-                      final PageController StringTranslationsPageController =
-                          PageController(initialPage: 0);
-                      if (SelectStringInfo != {} &&
-                          SelectStringInfo.containsKey('id')) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height / 5,
-                          child: PageView.builder(
-                              controller: StringTranslationsPageController,
-                              itemBuilder: (context, int Page) {
-                                return FutureBuilder(
-                                    future: CrowdinAPI.getStringTranslations(
-                                        Account.getToken(),
-                                        SelectStringInfo['id'],
-                                        Page),
-                                    builder: (context,
-                                        AsyncSnapshot<List?> snapshot) {
-                                      if (snapshot.hasData &&
-                                          snapshot.data != TranslationStrings) {
-                                        TranslationStrings = snapshot.data!;
-                                        return ListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount: snapshot.data!.length,
-                                            controller:
-                                                StringTranslationsScrollController,
-                                            itemBuilder: (context, index) {
-                                              Map TranslationStringInfo =
-                                                  TranslationStrings[index]
-                                                      ['data'];
-                                              String TranslationText =
-                                                  TranslationStringInfo['text'];
-                                              Map TranslationUser =
-                                                  TranslationStringInfo['user'];
-                                              bool IsMe =
-                                                  TranslationUser['id'] ==
-                                                      Account.getUserID();
-                                              return ListTile(
-                                                leading: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          50.0),
-                                                  child: Image.network(
-                                                    TranslationUser[
-                                                        "avatarUrl"],
-                                                    width: 50,
-                                                    height: 50,
-                                                    fit: BoxFit.fill,
-                                                    loadingBuilder: (context,
-                                                        child,
-                                                        loadingProgress) {
-                                                      if (loadingProgress ==
-                                                          null) return child;
-                                                      return CircularProgressIndicator(
-                                                        value: loadingProgress
-                                                                    .expectedTotalBytes !=
-                                                                null
-                                                            ? loadingProgress
-                                                                    .cumulativeBytesLoaded
-                                                                    .toInt() /
-                                                                loadingProgress
-                                                                    .expectedTotalBytes!
-                                                                    .toInt()
-                                                            : null,
-                                                      );
-                                                    },
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height / 5,
+                      child: Builder(builder: (context) {
+                        final ScrollController
+                            StringTranslationsScrollController =
+                            ScrollController();
+                        final PageController StringTranslationsPageController =
+                            PageController(initialPage: 0);
+                        if (SelectStringInfo != {} &&
+                            SelectStringInfo.containsKey('id')) {
+                          return Container(
+                            child: FutureBuilder(
+                                future: CrowdinAPI.getStringTranslations(
+                                  Account.getToken(),
+                                  SelectStringInfo['id'],
+                                ),
+                                builder:
+                                    (context, AsyncSnapshot<List?> snapshot) {
+                                  if (snapshot.hasData &&
+                                      snapshot.data != TranslationStrings) {
+                                    TranslationStrings = snapshot.data!;
+                                    return ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: snapshot.data!.length,
+                                        controller:
+                                            StringTranslationsScrollController,
+                                        itemBuilder: (context, index) {
+                                          Map TranslationStringInfo =
+                                              TranslationStrings[index]['data'];
+                                          String TranslationText =
+                                              TranslationStringInfo['text'];
+                                          Map TranslationUser =
+                                              TranslationStringInfo['user'];
+                                          bool IsMe = TranslationUser['id'] ==
+                                              Account.getUserID();
+                                          return ListTile(
+                                              leading: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(50.0),
+                                                child: Image.network(
+                                                  TranslationUser["avatarUrl"],
+                                                  width: 50,
+                                                  height: 50,
+                                                  fit: BoxFit.fill,
+                                                  loadingBuilder: (context,
+                                                      child, loadingProgress) {
+                                                    if (loadingProgress == null)
+                                                      return child;
+                                                    return CircularProgressIndicator(
+                                                      value: loadingProgress
+                                                                  .expectedTotalBytes !=
+                                                              null
+                                                          ? loadingProgress
+                                                                  .cumulativeBytesLoaded
+                                                                  .toInt() /
+                                                              loadingProgress
+                                                                  .expectedTotalBytes!
+                                                                  .toInt()
+                                                          : null,
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                              title: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    TranslationText,
                                                   ),
-                                                ),
-                                                title: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      TranslationText,
-                                                    ),
-                                                    Text(
-                                                        "${TranslationUser['username']} (${TranslationUser['fullName'] ?? ""})",
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.blue)),
-                                                  ],
-                                                ),
-                                                onTap: () {},
-                                                trailing: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    IconButton(
-                                                      icon: Icon(Icons
-                                                          .thumb_up_off_alt),
-                                                      tooltip: "喜歡",
-                                                      onPressed: () {},
-                                                    ),
-                                                    IconButton(
-                                                      icon: Icon(Icons
-                                                          .thumb_down_off_alt),
-                                                      tooltip: "不喜歡",
-                                                      onPressed: () {},
-                                                    )
-                                                  ],
-                                                ),
-                                              );
-                                            });
-                                      } else {
-                                        return Center(
-                                            child: CircularProgressIndicator());
-                                      }
-                                    });
-                              }),
-                        );
-                      } else {
-                        return Container();
-                      }
-                    }),
+                                                  Text(
+                                                      "${TranslationUser['username']} (${TranslationUser['fullName'] ?? ""})",
+                                                      style: TextStyle(
+                                                          color: Colors.blue)),
+                                                ],
+                                              ),
+                                              onTap: () {},
+                                              trailing: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Votes(TranslationStringInfo,
+                                                      IsMe, setView2State_),
+                                                ],
+                                              ));
+                                        });
+                                  } else {
+                                    return Center(
+                                        child: CircularProgressIndicator());
+                                  }
+                                }),
+                          );
+                        } else {
+                          return Container();
+                        }
+                      }),
+                    ),
                   ],
                 ),
               ),
             ],
             viewMode: SplitViewMode.Vertical,
-            gripSize: 3,
+            gripSize: 2,
+            gripColor: Colors.white12,
           );
         }),
       );
     });
+  }
+
+  Widget Votes(Map<dynamic, dynamic> TranslationStringInfo, bool IsMe,
+      StateSetter setView2State_) {
+    return FutureBuilder(
+        future: CrowdinAPI.getTranslationVotes(Account.getToken(),
+            TranslationStringInfo['id'], SelectStringInfo['id']),
+        builder: (context, AsyncSnapshot TranslationVotesSnapshot) {
+          if (TranslationVotesSnapshot.hasData) {
+            List TranslationVotes = TranslationVotesSnapshot.data;
+            return Row(children: [
+              Text(CrowdinAPI.prserVote(TranslationVotes).toString(),
+                  style: TextStyle(fontSize: 18)),
+              IconButton(
+                icon: Icon(TranslationVotes.any((Vote) =>
+                        TranslationVotes[0]['data']['user']['id'] ==
+                        Account.getUserID())
+                    ? Icons.thumb_up
+                    : Icons.thumb_up_off_alt),
+                tooltip: "我喜歡",
+                onPressed: () {
+                  showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (context) {
+                        if (IsMe) {
+                          return AlertDialog(
+                            title: Text("按讚失敗"),
+                            content: Text("您不能按讚自己的翻譯"),
+                            actions: [OkClose()],
+                          );
+                        } else {
+                          return FutureBuilder(
+                              future: CrowdinAPI.addVote(
+                                  Account.getToken(),
+                                  TranslationStringInfo['id'],
+                                  RPMTWData.MarkUp),
+                              builder: (context, AsyncSnapshot<Map?> snapshot) {
+                                if (snapshot.hasData &&
+                                    !snapshot.data!.containsKey('error')) {
+                                  setView2State_(() {});
+                                  return AlertDialog(
+                                    title: Text("按讚成功"),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text("確定"))
+                                    ],
+                                  );
+                                } else if (snapshot.hasData &&
+                                    snapshot.data!.containsKey('error')) {
+                                  return AlertDialog(
+                                    title: Text("按讚失敗"),
+                                    content: Text(
+                                        "錯誤原因: ${RPMTWData.TranslateErrorMessage(snapshot.data!['error']['message'])}"),
+                                    actions: [OkClose()],
+                                  );
+                                } else {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                }
+                              });
+                        }
+                      });
+                },
+              ),
+              IconButton(
+                icon: Icon(TranslationVotes.any((Vote) =>
+                        TranslationVotes[0]['data']['user']['id'] ==
+                        Account.getUserID())
+                    ? Icons.thumb_down
+                    : Icons.thumb_down_off_alt),
+                tooltip: "我不喜歡",
+                onPressed: () {
+                  showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (context) {
+                        if (IsMe) {
+                          return AlertDialog(
+                            title: Text("到讚失敗"),
+                            content: Text("您不能到讚自己的翻譯"),
+                            actions: [OkClose()],
+                          );
+                        } else {
+                          return FutureBuilder(
+                              future: CrowdinAPI.addVote(
+                                  Account.getToken(),
+                                  TranslationStringInfo['id'],
+                                  RPMTWData.MarkDown),
+                              builder: (context, AsyncSnapshot<Map?> snapshot) {
+                                if (snapshot.hasData &&
+                                    !snapshot.data!.containsKey('error')) {
+                                  setView2State_(() {});
+                                  return AlertDialog(
+                                    title: Text("到讚成功"),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text("確定"))
+                                    ],
+                                  );
+                                } else if (snapshot.hasData &&
+                                    snapshot.data!.containsKey('error')) {
+                                  return AlertDialog(
+                                    title: Text("到讚失敗"),
+                                    content: Text(
+                                        "錯誤原因: ${RPMTWData.TranslateErrorMessage(snapshot.data!['error']['message'])}"),
+                                    actions: [OkClose()],
+                                  );
+                                } else {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                }
+                              });
+                        }
+                      });
+                },
+              )
+            ]);
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        });
   }
 }
 

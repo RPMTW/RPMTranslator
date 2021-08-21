@@ -17,7 +17,7 @@ class ModsScreen_ extends State<ModsScreen> {
   final TextEditingController SearchController = TextEditingController();
   final ScrollController ModScrollController = ScrollController();
   final PageController ModPageController = PageController(initialPage: 0);
-  final List<String> VersionItems = RPMTWDataHandler.VersionItems;
+  final List<String> VersionItems = RPMTWData.VersionItems;
   String VersionItem = "1.17";
   int ModListLength = 0;
 
@@ -148,7 +148,7 @@ class ModsScreen_ extends State<ModsScreen> {
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height / 1.25,
                 child: FutureBuilder(
-                    future: RPMTWDataHandler.getCurseForgeIndex(
+                    future: RPMTWData.getCurseForgeIndex(
                         double.parse(VersionItem)),
                     builder: (context, AsyncSnapshot<Map> CurseIndexSnapshot) {
                       if (CurseIndexSnapshot.hasData) {
@@ -180,7 +180,7 @@ class ModsScreen_ extends State<ModsScreen> {
                                             int CurseID = int.parse(
                                                 CurseIndex[DirName] ?? "0");
                                             return FutureBuilder(
-                                                future: RPMTWDataHandler
+                                                future: RPMTWData
                                                     .getCurseForgeAddonInfo(
                                                         CurseID),
                                                 builder: (context,

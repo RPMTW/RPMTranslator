@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:rpmtranslator/API/APIs.dart';
 
-class RPMTWDataHandler {
+class RPMTWData {
   static List<String> VersionItems = ["1.17", "1.16", "1.12"];
   static Map<String, int> VersionDirID = {
     "1.12": 37104,
@@ -13,6 +13,14 @@ class RPMTWDataHandler {
   };
   static int CrowdinID = 442446;
   static String TraditionalChineseTaiwan = 'zh-TW';
+  static String MarkUp = 'up';
+  static String MarkDown = 'down';
+
+  static Map<String, String> ErrorMessage = {
+    "Forbidden": "沒有存取權限",
+    "An identical translation of this string has been already saved. Vote for the existing translation instead of adding a new one.":
+        "存在重複的翻譯"
+  };
 
   static Future<Map> getProgress() async {
     Response response = await get(Uri.parse(RPMTWProgressAPI));
@@ -33,5 +41,11 @@ class RPMTWDataHandler {
     Response response = await get(Uri.parse("$CurseForgeAPI/addon/$CurseID"));
     Map data = json.decode(response.body);
     return data;
+  }
+
+  static String TranslateErrorMessage(String Error) {
+    return ErrorMessage.containsKey(Error)
+        ? ErrorMessage[Error].toString()
+        : Error;
   }
 }
