@@ -1,9 +1,14 @@
 // ignore_for_file: non_constant_identifier_names, unused_local_variable, file_names, avoid_print, prefer_const_constructors, unnecessary_new, camel_case_types, annotate_overrides, prefer_const_literals_to_create_immutables, prefer_equal_for_default_values, unused_element, avoid_unnecessary_containers, use_key_in_widget_constructors, sized_box_for_whitespace
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:rpmtranslator/API/APIs.dart';
 import 'package:rpmtranslator/API/CrowdinAPI.dart';
 import 'package:rpmtranslator/API/RPMTWData.dart';
 import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Screen/Files.dart';
+import 'package:rpmtranslator/Utility/utility.dart';
 import 'package:rpmtranslator/Widget/AccountNone.dart';
 
 import '../main.dart';
@@ -140,47 +145,166 @@ class ModsScreen_ extends State<ModsScreen> {
               ],
             ),
             Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 1.25,
-              child: PageView.builder(
-                  controller: ModPageController,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, int Page) {
-                    return FutureBuilder(
-                        future: CrowdinAPI.getModsByVersion(Account.getToken(),
-                            VersionItem, SearchController.text, Page),
-                        builder: (context, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData && snapshot.data != null) {
-                            return ListView.builder(
-                                shrinkWrap: true,
-                                controller: ModScrollController,
-                                itemCount: snapshot.data.length,
-                                itemBuilder: (context, int Index) {
-                                  ModListLength = snapshot.data.length;
-                                  Map data = snapshot.data[Index]['data'];
-                                  String DirName = data['name'].toString();
-                                  return ListTile(
-                                    title: Text(DirName,
-                                        textAlign: TextAlign.center),
-                                    onTap: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) =>
-                                              FilesScreen(DirID: data['id']));
-                                    },
-                                  );
-                                });
-                          } else if (snapshot.hasData &&
-                              snapshot.data == null) {
-                            return AccountNone();
-                          } else if (snapshot.hasError) {
-                            return Text(snapshot.error.toString());
-                          } else {
-                            return Center(child: CircularProgressIndicator());
-                          }
-                        });
-                  }),
-            ),
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height / 1.25,
+                child: FutureBuilder(
+                    future: RPMTWDataHandler.getCurseForgeIndex(
+                        double.parse(VersionItem)),
+                    builder: (context, AsyncSnapshot<Map> CurseIndexSnapshot) {
+                      if (CurseIndexSnapshot.hasData) {
+                        Map CurseIndex = CurseIndexSnapshot.data!;
+                        return PageView.builder(
+                            controller: ModPageController,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, int Page) {
+                              return FutureBuilder(
+                                  future: CrowdinAPI.getModsByVersion(
+                                      Account.getToken(),
+                                      VersionItem,
+                                      SearchController.text,
+                                      Page),
+                                  builder: (context, AsyncSnapshot snapshot) {
+                                    if (snapshot.hasData &&
+                                        snapshot.data != null) {
+                                      return ListView.builder(
+                                          shrinkWrap: true,
+                                          controller: ModScrollController,
+                                          itemCount: snapshot.data.length,
+                                          itemBuilder: (context, int Index) {
+                                            ModListLength =
+                                                snapshot.data.length;
+                                            Map data =
+                                                snapshot.data[Index]['data'];
+                                            String DirName =
+                                                data['name'].toString();
+                                            int CurseID = int.parse(
+                                                CurseIndex[DirName] ?? "0");
+                                            return FutureBuilder(
+                                                future: RPMTWDataHandler
+                                                    .getCurseForgeAddonInfo(
+                                                        CurseID),
+                                                builder: (context,
+                                                    AsyncSnapshot<Map>
+                                                        CurseAddonSnapshot) {
+                                                  if (CurseAddonSnapshot
+                                                      .hasData) {
+                                                    bool IsCurseMod =
+                                                        CurseAddonSnapshot
+                                                                    .data !=
+                                                                {} &&
+                                                            CurseIndex
+                                                                .containsKey(
+                                                                    DirName);
+                                                    return ListTile(
+                                                        leading: SizedBox(
+                                                          width: 50,
+                                                          height: 50,
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0),
+                                                            child: Builder(
+                                                                builder:
+                                                                    (context) {
+                                                              if (IsCurseMod) {
+                                                                Map?
+                                                                    CurseAddonInfo =
+                                                                    CurseAddonSnapshot
+                                                                        .data;
+                                                                if (CurseAddonInfo!
+                                                                        .containsKey(
+                                                                            'attachments') &&
+                                                                    CurseAddonInfo[
+                                                                            'attachments']
+                                                                        .isNotEmpty) {
+                                                                  return Image.network(
+                                                                      CurseAddonInfo['attachments']
+                                                                              [
+                                                                              0]
+                                                                          [
+                                                                          'thumbnailUrl'],
+                                                                      fit: BoxFit
+                                                                          .fill);
+                                                                } else {
+                                                                  return Icon(
+                                                                      Icons
+                                                                          .image,
+                                                                      size: 50);
+                                                                }
+                                                              } else {
+                                                                return Icon(
+                                                                    Icons.image,
+                                                                    size: 50);
+                                                              }
+                                                            }),
+                                                          ),
+                                                        ),
+                                                        title: Text(DirName),
+                                                        onTap: () {
+                                                          showDialog(
+                                                              context: context,
+                                                              builder: (context) =>
+                                                                  FilesScreen(
+                                                                      DirID: data[
+                                                                          'id']));
+                                                        },
+                                                        trailing: SizedBox(
+                                                          width: 50,
+                                                          height: 50,
+                                                          child: Builder(
+                                                              builder:
+                                                                  (context) {
+                                                            if (IsCurseMod) {
+                                                              Map?
+                                                                  CurseAddonInfo =
+                                                                  CurseAddonSnapshot
+                                                                      .data;
+                                                              return Row(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .min,
+                                                                  children: [
+                                                                    IconButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        utility.OpenUrl(
+                                                                            CurseAddonInfo!['websiteUrl']);
+                                                                      },
+                                                                      icon: Icon(
+                                                                          Icons
+                                                                              .open_in_browser),
+                                                                      tooltip:
+                                                                          "在 CurseForge 檢視此模組",
+                                                                    )
+                                                                  ]);
+                                                            } else {
+                                                              return Container();
+                                                            }
+                                                          }),
+                                                        ));
+                                                  } else {
+                                                    return Center(
+                                                        child:
+                                                            CircularProgressIndicator());
+                                                  }
+                                                });
+                                          });
+                                    } else if (snapshot.hasData &&
+                                        snapshot.data == null) {
+                                      return AccountNone();
+                                    } else if (snapshot.hasError) {
+                                      return Text(snapshot.error.toString());
+                                    } else {
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    }
+                                  });
+                            });
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    })),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

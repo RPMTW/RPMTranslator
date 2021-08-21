@@ -18,4 +18,19 @@ class RPMTWDataHandler {
     Map data = json.decode(response.body);
     return data;
   }
+
+  static Future<Map> getCurseForgeIndex(double VersionID) async {
+    String GitVersion = VersionID == 1.16 ? "Original" : "Original-$VersionID";
+    Response response = await get(Uri.parse(
+        "https://raw.githubusercontent.com/RPMTW/ResourcePack-Mod-zh_tw/$GitVersion/$VersionID/CurseForgeIndex.json"));
+    Map data = json.decode(response.body);
+    return data;
+  }
+
+  static Future<Map> getCurseForgeAddonInfo(int CurseID) async {
+    if (CurseID == 0) return {};
+    Response response = await get(Uri.parse("$CurseForgeAPI/addon/$CurseID"));
+    Map data = json.decode(response.body);
+    return data;
+  }
 }
