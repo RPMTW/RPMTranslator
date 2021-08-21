@@ -9,7 +9,7 @@ import 'package:rpmtranslator/Widget/AccountNone.dart';
 import 'API/RPMTWData.dart';
 import 'Screen/Account.dart';
 import 'Screen/Progress.dart';
-import 'Screen/Translate.dart';
+import 'Screen/Mods.dart';
 import 'Utility/utility.dart';
 
 void main() {
@@ -83,13 +83,13 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Transform.scale(
-                  scale: 2,
-                  child: TextButton(
+            Transform.scale(
+              scale: 2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton(
                     onPressed: () {
                       Navigator.push(
                           context,
@@ -107,26 +107,21 @@ class _HomePageState extends State<HomePage> {
                         ),
                         Text(
                           "查看翻譯進度",
-                          style: TextStyle(
-                              fontSize:
-                                  MediaQuery.of(context).size.height / 55),
+                          style: TextStyle(fontSize: 25),
                         )
                       ],
                     ),
                   ),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 13,
-                ),
-                Transform.scale(
-                  scale: 2,
-                  child: TextButton(
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width / 90,
+                  ),
+                  TextButton(
                     onPressed: () {
                       if (Account.has() && !Account.expired()) {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => TranslateScreen()));
+                                builder: (context) => ModsScreen()));
                       } else {
                         showDialog(
                             context: context,
@@ -144,16 +139,13 @@ class _HomePageState extends State<HomePage> {
                         SizedBox(
                           width: 5,
                         ),
-                        Text("翻譯模組",
-                            style: TextStyle(
-                                fontSize:
-                                    MediaQuery.of(context).size.height / 55))
+                        Text("翻譯模組", style: TextStyle(fontSize: 25))
                       ],
                     ),
                   ),
-                )
-              ],
-            )
+                ],
+              ),
+            ),
           ],
         ),
       ),

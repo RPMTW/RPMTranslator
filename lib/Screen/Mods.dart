@@ -1,18 +1,20 @@
-// ignore_for_file: non_constant_identifier_names, unused_local_variable, file_names, avoid_print, prefer_const_constructors, unnecessary_new, camel_case_types, annotate_overrides, prefer_const_literals_to_create_immutables, prefer_equal_for_default_values, unused_element, avoid_unnecessary_containers, use_key_in_widget_constructors, sized_box_for_whitespace, no_logic_in_create_state
+// ignore_for_file: non_constant_identifier_names, unused_local_variable, file_names, avoid_print, prefer_const_constructors, unnecessary_new, camel_case_types, annotate_overrides, prefer_const_literals_to_create_immutables, prefer_equal_for_default_values, unused_element, avoid_unnecessary_containers, use_key_in_widget_constructors, sized_box_for_whitespace
 import 'package:flutter/material.dart';
 import 'package:rpmtranslator/API/CrowdinAPI.dart';
+import 'package:rpmtranslator/API/RPMTWData.dart';
 import 'package:rpmtranslator/Account/Account.dart';
+import 'package:rpmtranslator/Screen/Files.dart';
 import 'package:rpmtranslator/Widget/AccountNone.dart';
 
-class FilesScreen_ extends State<FilesScreen> {
+import '../main.dart';
+
+class ModsScreen_ extends State<ModsScreen> {
   final TextEditingController SearchController = TextEditingController();
-  final ScrollController FilesScrollController = ScrollController();
-  final PageController FilesPageController = PageController(initialPage: 0);
-  int FilesListLength = 0;
-
-  final int DirID;
-
-  FilesScreen_({required this.DirID});
+  final ScrollController ModScrollController = ScrollController();
+  final PageController ModPageController = PageController(initialPage: 0);
+  final List<String> VersionItems = RPMTWDataHandler.VersionItems;
+  String VersionItem = "1.17";
+  int ModListLength = 0;
 
   @override
   void initState() {
@@ -27,12 +29,15 @@ class FilesScreen_ extends State<FilesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("檔案選擇頁面"),
+        title: Text("模組翻譯頁面"),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           tooltip: "返回",
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => App()),
+            );
           },
         ),
         centerTitle: true,
@@ -61,7 +66,7 @@ class FilesScreen_ extends State<FilesScreen> {
                   textAlign: TextAlign.center,
                   controller: SearchController,
                   decoration: InputDecoration(
-                    hintText: "請輸入檔案名稱",
+                    hintText: "請輸入模組ID",
                     enabledBorder: OutlineInputBorder(
                       borderSide:
                           BorderSide(color: Colors.lightBlue, width: 5.0),
@@ -84,7 +89,7 @@ class FilesScreen_ extends State<FilesScreen> {
                       backgroundColor:
                           MaterialStateProperty.all(Colors.deepPurpleAccent)),
                   onPressed: () {
-                    FilesPageController.animateToPage(0,
+                    ModPageController.animateToPage(0,
                         curve: Curves.easeOut,
                         duration: const Duration(milliseconds: 300));
                     setState(() {});
@@ -95,34 +100,74 @@ class FilesScreen_ extends State<FilesScreen> {
                   ),
                 ),
                 SizedBox(
+                  width: 12,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "遊戲版本",
+                      style: title_,
+                    ),
+                    DropdownButton<String>(
+                      value: VersionItem,
+                      style: TextStyle(color: Colors.white),
+                      onChanged: (String? newValue) {
+                        VersionItem = newValue.toString();
+                        ModPageController.animateToPage(0,
+                            curve: Curves.easeOut,
+                            duration: const Duration(milliseconds: 300));
+                        setState(() {});
+                      },
+                      items: VersionItems.map<DropdownMenuItem<String>>(
+                          (String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            textAlign: TextAlign.center,
+                            style: title_,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+                SizedBox(
                   width: 30,
                 ),
               ],
             ),
             Container(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 1.3,
+              height: MediaQuery.of(context).size.height / 1.25,
               child: PageView.builder(
-                  controller: FilesPageController,
+                  controller: ModPageController,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, int Page) {
                     return FutureBuilder(
-                        future: CrowdinAPI.getFilesByDir(Account.getToken(),
-                            DirID, SearchController.text, Page),
+                        future: CrowdinAPI.getModsByVersion(Account.getToken(),
+                            VersionItem, SearchController.text, Page),
                         builder: (context, AsyncSnapshot snapshot) {
                           if (snapshot.hasData && snapshot.data != null) {
                             return ListView.builder(
                                 shrinkWrap: true,
-                                controller: FilesScrollController,
+                                controller: ModScrollController,
                                 itemCount: snapshot.data.length,
                                 itemBuilder: (context, int Index) {
-                                  FilesListLength = snapshot.data.length;
+                                  ModListLength = snapshot.data.length;
                                   Map data = snapshot.data[Index]['data'];
                                   String DirName = data['name'].toString();
                                   return ListTile(
                                     title: Text(DirName,
                                         textAlign: TextAlign.center),
-                                    onTap: () {},
+                                    onTap: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              FilesScreen(DirID: data['id']));
+                                    },
                                   );
                                 });
                           } else if (snapshot.hasData &&
@@ -142,8 +187,8 @@ class FilesScreen_ extends State<FilesScreen> {
                 IconButton(
                     tooltip: "上一頁",
                     onPressed: () {
-                      FilesPageController.animateToPage(
-                          FilesPageController.page!.toInt() - 1,
+                      ModPageController.animateToPage(
+                          ModPageController.page!.toInt() - 1,
                           curve: Curves.easeOut,
                           duration: const Duration(milliseconds: 300));
                     },
@@ -154,15 +199,15 @@ class FilesScreen_ extends State<FilesScreen> {
                 IconButton(
                     tooltip: "下一頁",
                     onPressed: () {
-                      if (FilesListLength < 20) return;
-                      FilesPageController.animateToPage(
-                          FilesPageController.page!.toInt() + 1,
+                      if (ModListLength < 20) return;
+                      ModPageController.animateToPage(
+                          ModPageController.page!.toInt() + 1,
                           curve: Curves.easeOut,
                           duration: const Duration(milliseconds: 300));
                     },
                     icon: Icon(Icons.navigate_next))
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -170,11 +215,7 @@ class FilesScreen_ extends State<FilesScreen> {
   }
 }
 
-class FilesScreen extends StatefulWidget {
-  final int DirID;
-
-  const FilesScreen({required this.DirID});
-
+class ModsScreen extends StatefulWidget {
   @override
-  FilesScreen_ createState() => FilesScreen_(DirID: DirID);
+  ModsScreen_ createState() => ModsScreen_();
 }
