@@ -22,7 +22,6 @@ class CrowdinAuthHandler {
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();
-
     if (response.statusCode == 200) {
       Map data = json.decode(await response.stream.bytesToString());
       return [Success, data];

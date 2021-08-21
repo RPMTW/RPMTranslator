@@ -10,6 +10,7 @@ import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Screen/Files.dart';
 import 'package:rpmtranslator/Utility/utility.dart';
 import 'package:rpmtranslator/Widget/AccountNone.dart';
+import 'package:rpmtranslator/Widget/OkClose.dart';
 
 import '../main.dart';
 
@@ -148,8 +149,8 @@ class ModsScreen_ extends State<ModsScreen> {
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height / 1.25,
                 child: FutureBuilder(
-                    future: RPMTWData.getCurseForgeIndex(
-                        double.parse(VersionItem)),
+                    future:
+                        RPMTWData.getCurseForgeIndex(double.parse(VersionItem)),
                     builder: (context, AsyncSnapshot<Map> CurseIndexSnapshot) {
                       if (CurseIndexSnapshot.hasData) {
                         Map CurseIndex = CurseIndexSnapshot.data!;
@@ -293,6 +294,15 @@ class ModsScreen_ extends State<ModsScreen> {
                                     } else if (snapshot.hasData &&
                                         snapshot.data == null) {
                                       return AccountNone();
+                                    } else if (snapshot.hasData &&
+                                        snapshot.data is Map &&
+                                        snapshot.data.containsKey('error')) {
+                                      return AlertDialog(
+                                        title: Text("取得模組失敗"),
+                                        content: Text(
+                                            "錯誤原因: ${RPMTWData.TranslateErrorMessage(snapshot.data!['error']['message'])}"),
+                                        actions: [OkClose()],
+                                      );
                                     } else if (snapshot.hasError) {
                                       return Text(snapshot.error.toString());
                                     } else {

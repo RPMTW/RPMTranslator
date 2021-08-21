@@ -584,6 +584,18 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                                 children: [
                                                   Votes(TranslationStringInfo,
                                                       IsMe, setView2State_),
+                                                  IconButton(
+                                                    onPressed: () {
+                                                      Clipboard.setData(
+                                                          ClipboardData(
+                                                              text:
+                                                                  TranslationStringInfo[
+                                                                      'text']));
+                                                    },
+                                                    icon: Icon(
+                                                        Icons.copy_outlined),
+                                                    tooltip: "複製譯文",
+                                                  ),
                                                 ],
                                               ));
                                         });

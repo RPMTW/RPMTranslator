@@ -17,7 +17,7 @@ class CrowdinAPI {
 
     Map data =
         json.decode((await http.get(Uri.parse(url), headers: headers)).body);
-    return data.containsKey('error') ? null : data['data'];
+    return data.containsKey('error') ? data : data['data'];
   }
 
   static Future<Response> basePost(String Token, String url, Map Json) async {
@@ -75,8 +75,7 @@ class CrowdinAPI {
             : data['data'];
   }
 
-  static Future<List?> getStringTranslations(
-      String Token, int StringID) async {
+  static Future<List?> getStringTranslations(String Token, int StringID) async {
     String url =
         "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/translations?stringId=$StringID&languageId=${RPMTWData.TraditionalChineseTaiwan}&limit=20";
     dynamic data = await baseGet(Token, url);
