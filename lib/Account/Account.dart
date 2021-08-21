@@ -16,8 +16,8 @@ class Account {
     return _account;
   }
 
-  static void add(Token) {
-    _account = {"AccessToken": Token, "Expired": false};
+  static void add(String Token, int UserID) {
+    _account = {"AccessToken": Token, "UserID": UserID, "Expired": false};
     save();
   }
 
@@ -31,6 +31,10 @@ class Account {
 
   static String getToken() {
     return _account["AccessToken"];
+  }
+
+  static int getUserID() {
+    return _account["UserID"];
   }
 
   static void logout() {

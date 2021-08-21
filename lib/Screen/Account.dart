@@ -92,16 +92,17 @@ class AccountScreen_ extends State<AccountScreen> {
                                     TokenController.text),
                                 builder: (context, AsyncSnapshot snapshot) {
                                   if (snapshot.hasData &&
-                                      snapshot.data ==
+                                      snapshot.data[0] ==
                                           CrowdinAuthHandler.Success) {
-                                    Account.add(TokenController.text);
+                                    Account.add(TokenController.text,
+                                        snapshot.data[1]['data']['id']);
                                     return AlertDialog(
                                       title: Text("登入成功",
                                           textAlign: TextAlign.center),
                                       actions: [
                                         IconButton(
                                           icon: Icon(Icons.close),
-                                          tooltip: "OK",
+                                          tooltip: "確定",
                                           onPressed: () {
                                             Navigator.push(
                                                 context,
@@ -113,7 +114,7 @@ class AccountScreen_ extends State<AccountScreen> {
                                       ],
                                     );
                                   } else if (snapshot.hasData &&
-                                      snapshot.data ==
+                                      snapshot.data[0] ==
                                           CrowdinAuthHandler.Error) {
                                     return AlertDialog(
                                       title: Text("登入失敗",

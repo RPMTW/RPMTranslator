@@ -66,15 +66,23 @@ class CrowdinAPI {
     return data;
   }
 
-  static Future<Map?> getAddTranslation(
+  static Future<Map?> addTranslation(
       String Token, int StringID, String text) async {
     String url =
         "$CrowdinBaseAPI/projects/${RPMTWDataHandler.CrowdinID}/translations";
     dynamic data = await basePost(Token, url, {
       "stringId": StringID,
-      "languageId": "zh-TW", //繁體中文
+      "languageId": RPMTWDataHandler.TraditionalChineseTaiwan, //繁體中文
       "text": text,
     });
+    return data;
+  }
+
+  static Future<List?> getStringTranslations(
+      String Token, int StringID, int Page) async {
+    String url =
+        "$CrowdinBaseAPI/projects/${RPMTWDataHandler.CrowdinID}/translations?stringId=$StringID&languageId=${RPMTWDataHandler.TraditionalChineseTaiwan}&offset=${Page * 20}&limit=20";
+    dynamic data = await baseGet(Token, url);
     return data;
   }
 }

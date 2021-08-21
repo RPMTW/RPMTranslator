@@ -12,6 +12,7 @@ class RPMTWDataHandler {
     "1.17": 33894
   };
   static int CrowdinID = 442446;
+  static String TraditionalChineseTaiwan = 'zh-TW';
 
   static Future<Map> getProgress() async {
     Response response = await get(Uri.parse(RPMTWProgressAPI));
