@@ -15,6 +15,7 @@ class RPMTWData {
   static String TraditionalChineseTaiwan = 'zh-TW';
   static String MarkUp = 'up';
   static String MarkDown = 'down';
+  static Map<String, String> UserAgent = {'User-Agent': 'RPMTranslator'};
 
   static Map<String, String> ErrorMessage = {
     "Forbidden": "沒有存取權限",
@@ -47,5 +48,11 @@ class RPMTWData {
     return ErrorMessage.containsKey(Error)
         ? ErrorMessage[Error].toString()
         : Error;
+  }
+
+  static String FormatIsoTime(String IsoTime) {
+    DateTime Time = DateTime.parse(IsoTime);
+
+    return "${Time.year}年 ${Time.month}月 ${Time.day}日 ${Time.hour}時 ${Time.minute}分鐘 ${Time.second}秒";
   }
 }

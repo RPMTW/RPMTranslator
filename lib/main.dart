@@ -6,8 +6,7 @@ import 'package:rpmtranslator/API/APIs.dart';
 import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Widget/AccountNone.dart';
 
-import 'API/RPMTWData.dart';
-import 'Screen/Account.dart';
+import 'Screen/CrowdinOauth.dart';
 import 'Screen/Progress.dart';
 import 'Screen/Mods.dart';
 import 'Utility/utility.dart';
@@ -73,7 +72,8 @@ class _HomePageState extends State<HomePage> {
               icon: Icon(Icons.manage_accounts),
               onPressed: () {
                 showDialog(
-                    context: context, builder: (context) => AccountScreen());
+                    context: context,
+                    builder: (context) => CrowdinAuthScreen());
               },
               tooltip: "登入帳號",
             ),

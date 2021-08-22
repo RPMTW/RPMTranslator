@@ -2,7 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmtranslator/Screen/Account.dart';
+import 'package:rpmtranslator/Screen/CrowdinOauth.dart';
 
 class AccountNone extends StatelessWidget {
   const AccountNone({
@@ -19,7 +19,7 @@ class AccountNone extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
               showDialog(
-                  context: context, builder: (context) => AccountScreen());
+                  context: context, builder: (context) => CrowdinAuthScreen());
             },
             child: Text("確定"))
       ],

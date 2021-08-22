@@ -20,6 +20,7 @@ dependencies:
   io:
   auto_size_text: 3.0.0-nullsafety.0
   split_view:
+  oauth2:
 
 dev_dependencies:
   flutter_test:

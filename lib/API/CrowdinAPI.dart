@@ -6,7 +6,6 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:rpmtranslator/API/APIs.dart';
 import 'package:rpmtranslator/API/RPMTWData.dart';
-import 'package:rpmtranslator/Account/CrowdinAuth.dart';
 
 class CrowdinAPI {
   static Future<dynamic> baseGet(String Token, String url) async {
@@ -14,6 +13,7 @@ class CrowdinAPI {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $Token'
     };
+    headers.addAll(RPMTWData.UserAgent);
 
     Map data =
         json.decode((await http.get(Uri.parse(url), headers: headers)).body);
@@ -25,6 +25,7 @@ class CrowdinAPI {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $Token'
     };
+    headers.addAll(RPMTWData.UserAgent);
     Response response = await http.post(Uri.parse(url),
         headers: headers, body: json.encode(Json));
     return response;
@@ -119,6 +120,14 @@ class CrowdinAPI {
         Token, url, {"mark": mark, "translationId": TranslationID});
     Map data = json.decode(response.body);
 
+    return data;
+  }
+
+  static Future<List?> getCommentsByString(
+      String Token, int StringID, int Page) async {
+    String url =
+        "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/comments/?stringId=$StringID&offset=${Page * 20}&limit=20";
+    dynamic data = await baseGet(Token, url);
     return data;
   }
 }
