@@ -22,6 +22,7 @@ dependencies:
   split_view:
   oauth2:
   translator: ^0.1.7
+  html: ^0.15.0
 
 dev_dependencies:
   flutter_test:
