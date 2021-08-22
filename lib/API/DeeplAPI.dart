@@ -6,36 +6,49 @@ import 'package:http/http.dart' as http;
 import 'package:rpmtranslator/API/RPMTWData.dart';
 
 class DeeplAPI {
-  static const int DeeplID = 84350005;
+  static const int DeeplID = 18350051;
 
   static Future<String> Translation(String SrcText) async {
     Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'Cookie':
-          'LMTBID=v2|0e8b2111-393e-474b-920d-b08c29d478dd|af835dcc3d4fb45eb2d3a9d31dfb06fd'
+      "Content-type": "application/json",
     };
     // headers.addAll(RPMTWData.UserAgent);
 
     Response response = await http.post(
-        Uri.parse("https://www2.deepl.com/jsonrpc?method=LMT_handle_jobs"),
-        headers: headers,
-        body: json.encode({
-          "jsonrpc": "2.0",
-          "method": "LMT_handle_jobs",
-          "params": {
-            "jobs": [
-              {"kind": "default", "raw_en_sentence": SrcText, "quality": "fast"}
-            ],
-            "lang": {"source_lang_user_selected": "EN", "target_lang": "ZH"},
-            "timestamp": 1629608587035
+      Uri.parse("https://www2.deepl.com/jsonrpc?method=LMT_handle_jobs"),
+      headers: headers,
+      body: json.encode({
+        "jsonrpc": "2.0",
+        "method": "LMT_handle_jobs",
+        "params": {
+          "jobs": [
+            {
+              "kind": "default",
+              "raw_en_sentence": SrcText,
+              "raw_en_context_before": [],
+              "raw_en_context_after": [],
+              "preferred_num_beams": 4,
+              "quality": "fast"
+            }
+          ],
+          "lang": {
+            "preference": {"weight": {}, "default": "default"},
+            "source_lang_user_selected": "EN",
+            "target_lang": "ZH"
           },
-          "id": DeeplID
-        }));
+          "priority": -1,
+          "commonJobParams": {"formality": null},
+          "timestamp": DateTime.now().millisecondsSinceEpoch - 3000
+        },
+        "id": DeeplID
+      }),
+    );
 
     if (response.statusCode == 200) {
       return json.decode(response.body)['result']['translations'][0]['beams'][0]
           ['postprocessed_sentence'];
     } else if (response.statusCode == 429) {
+      print(response.reasonPhrase);
       throw new Exception("Too many Requests");
     } else {
       print(response.reasonPhrase);

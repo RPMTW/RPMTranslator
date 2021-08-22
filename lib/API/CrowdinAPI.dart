@@ -14,7 +14,6 @@ class CrowdinAPI {
       'Authorization': 'Bearer $Token'
     };
     headers.addAll(RPMTWData.UserAgent);
-
     Map data =
         json.decode((await http.get(Uri.parse(url), headers: headers)).body);
     return data.containsKey('error') ? data : data['data'];

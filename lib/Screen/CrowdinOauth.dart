@@ -42,7 +42,9 @@ class _CrowdinOauthState extends State<CrowdinAuthScreen> {
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.hasData &&
                 snapshot.data[0] == CrowdinAuthHandler.Success) {
-              Account.add(client.credentials.accessToken,
+              Account.add(
+                  client.credentials.accessToken,
+                  client.credentials.refreshToken.toString(),
                   snapshot.data[1]['data']['id']);
               return AlertDialog(
                 title: Text("登入成功", textAlign: TextAlign.center),

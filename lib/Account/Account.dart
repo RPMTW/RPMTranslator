@@ -16,8 +16,13 @@ class Account {
     return _account;
   }
 
-  static void add(String Token, int UserID) {
-    _account = {"AccessToken": Token, "UserID": UserID, "Expired": false};
+  static void add(String Token, String RefreshToken, int UserID) {
+    _account = {
+      "AccessToken": Token,
+      "RefreshToken": RefreshToken,
+      "UserID": UserID,
+      "Expired": false
+    };
     save();
   }
 
@@ -46,7 +51,8 @@ class Account {
     AccountFile.writeAsStringSync(json.encode(_account));
   }
 
-  static void update() {
-    _account = json.decode(AccountFile.readAsStringSync());
+  static void change(Map Json) {
+    _account = Json;
+    save();
   }
 }
