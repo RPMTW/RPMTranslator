@@ -282,7 +282,8 @@ class TranslateScreen_ extends State<TranslateScreen> {
                       child: Row(mainAxisSize: MainAxisSize.min, children: [
                         Expanded(
                           child: ListTile(
-                            title: AutoSizeText("討論區"),
+                            title: AutoSizeText("討論區",
+                                textAlign: TextAlign.center),
                             leading: Icon(Icons.comment),
                             onTap: () {
                               View3SelectedIndex = 0;
@@ -293,21 +294,21 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                 : Theme.of(context).scaffoldBackgroundColor,
                           ),
                         ),
-                        Expanded(
-                          child: ListTile(
-                            title: AutoSizeText("詞彙表"),
-                            leading: Icon(
-                              Icons.book,
-                            ),
-                            onTap: () {
-                              View3SelectedIndex = 1;
-                              setView3State(() {});
-                            },
-                            tileColor: View3SelectedIndex == 1
-                                ? Colors.white12
-                                : Theme.of(context).scaffoldBackgroundColor,
-                          ),
-                        ),
+                        // Expanded(
+                        //   child: ListTile(
+                        //     title: AutoSizeText("詞彙表"),
+                        //     leading: Icon(
+                        //       Icons.book,
+                        //     ),
+                        //     onTap: () {
+                        //       View3SelectedIndex = 1;
+                        //       setView3State(() {});
+                        //     },
+                        //     tileColor: View3SelectedIndex == 1
+                        //         ? Colors.white12
+                        //         : Theme.of(context).scaffoldBackgroundColor,
+                        //   ),
+                        // ),
                       ]),
                     ),
                     Builder(builder: (context) {
@@ -319,8 +320,8 @@ class TranslateScreen_ extends State<TranslateScreen> {
                               TranslateTextController: TranslateTextController,
                               setView3State: setView3State,
                               title_: title_);
-                        case 1:
-                          return Text("詞彙");
+                        // case 1:
+                        //   return GlossariesView();
                         default:
                           return Container();
                       }
@@ -401,7 +402,9 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                 style: TextStyle(
                                     color: Colors.blue, fontSize: 20)),
                             AutoSizeText(
-                              SelectStringInfo['text'],
+                              SelectStringInfo['text']
+                                  .toString()
+                                  .replaceAll("\\n", "\n"),
                             ),
                             AutoSizeText("語系鍵",
                                 style: TextStyle(
@@ -621,7 +624,9 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                           Map TranslationStringInfo =
                                               TranslationStrings[index]['data'];
                                           String TranslationText =
-                                              TranslationStringInfo['text'];
+                                              TranslationStringInfo['text']
+                                                  .toString()
+                                                  .replaceAll("\\n", "\n");
                                           Map TranslationUser =
                                               TranslationStringInfo['user'];
                                           bool IsMe = TranslationUser['id'] ==
@@ -674,7 +679,6 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                                               Colors.white70))
                                                 ],
                                               ),
-                                              onTap: () {},
                                               trailing: Row(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
@@ -880,11 +884,15 @@ class MachineTranslation extends StatelessWidget {
                       child: ListTile(
                           leading: Image.network(
                               'https://www.google.com/favicon.ico'),
-                          title: Text(GoogleSnapshot.data.text),
+                          title: Text(GoogleSnapshot.data.text
+                              .toString()
+                              .replaceAll("\\n", "\n")),
                           subtitle: Text("由 Google 翻譯提供"),
                           onTap: () {
-                            Clipboard.setData(
-                                ClipboardData(text: GoogleSnapshot.data.text));
+                            Clipboard.setData(ClipboardData(
+                                text: GoogleSnapshot.data.text
+                                    .toString()
+                                    .replaceAll("\\n", "\n")));
                           }),
                     );
                   } else if (GoogleSnapshot.hasError) {
@@ -903,11 +911,15 @@ class MachineTranslation extends StatelessWidget {
                       child: ListTile(
                           leading: Image.network(
                               'https://www.modernmt.com/assets/images/favicon/favicon.ico'),
-                          title: Text(ModernMTSnapshot.data),
+                          title: Text(ModernMTSnapshot.data
+                              .toString()
+                              .replaceAll("\\n", "\n")),
                           subtitle: Text("由 ModernMT 翻譯提供"),
                           onTap: () {
-                            Clipboard.setData(
-                                ClipboardData(text: ModernMTSnapshot.data));
+                            Clipboard.setData(ClipboardData(
+                                text: ModernMTSnapshot.data
+                                    .toString()
+                                    .replaceAll("\\n", "\n")));
                           }),
                     );
                   } else if (ModernMTSnapshot.hasError) {
@@ -927,11 +939,15 @@ class MachineTranslation extends StatelessWidget {
                       child: ListTile(
                           leading: Image.network(
                               'https://translate.yandex.com/icons/favicon.ico'),
-                          title: Text(YandexSnapshot.data),
+                          title: Text(YandexSnapshot.data
+                              .toString()
+                              .replaceAll("\\n", "\n")),
                           subtitle: Text("由 Yandex 翻譯提供"),
                           onTap: () {
-                            Clipboard.setData(
-                                ClipboardData(text: YandexSnapshot.data));
+                            Clipboard.setData(ClipboardData(
+                                text: YandexSnapshot.data
+                                    .toString()
+                                    .replaceAll("\\n", "\n")));
                           }),
                     );
                   } else if (YandexSnapshot.hasError) {

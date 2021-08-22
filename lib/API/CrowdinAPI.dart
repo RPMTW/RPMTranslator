@@ -1,11 +1,13 @@
 // ignore_for_file: non_constant_identifier_names, unused_local_variable, file_names, avoid_print, prefer_const_constructors, unnecessary_new, camel_case_types, annotate_overrides, prefer_const_literals_to_create_immutables, prefer_equal_for_default_values, unused_element, avoid_unnecessary_containers, use_key_in_widget_constructors, sized_box_for_whitespace
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:rpmtranslator/API/APIs.dart';
 import 'package:rpmtranslator/API/RPMTWData.dart';
+import 'package:path/path.dart' as path;
 
 class CrowdinAPI {
   static Future<dynamic> baseGet(String Token, String url) async {
@@ -19,14 +21,18 @@ class CrowdinAPI {
     return data.containsKey('error') ? response : data['data'];
   }
 
-  static Future<Response> basePost(String Token, String url, Map Json) async {
+  static Future<Response> basePost(String Token, String url, dynamic body,
+      [headers_]) async {
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $Token'
     };
+    if (headers_ != null) {
+      headers.addAll(headers_);
+    }
     headers.addAll(RPMTWData.UserAgent);
     Response response = await http.post(Uri.parse(url),
-        headers: headers, body: json.encode(Json));
+        headers: headers, body: body is Map ? json.encode(body) : body);
     return response;
   }
 
@@ -156,5 +162,16 @@ class CrowdinAPI {
         : data.containsKey('error')
             ? null
             : data['data'];
+  }
+
+  static Future<Map?> addStorage(String Token, File file) async {
+    String url = "$CrowdinBaseAPI/storages";
+
+    Response response = await basePost(Token, url, file.readAsBytesSync(), {
+      "Crowdin-API-FileName": path.basename(file.path),
+      "Content-Type": "application/octet-stream"
+    });
+    Map data = json.decode(response.body);
+    return data;
   }
 }

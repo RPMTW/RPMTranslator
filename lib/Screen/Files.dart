@@ -5,6 +5,7 @@ import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Widget/AccountNone.dart';
 
 import 'Translate.dart';
+import 'UploadTranslation.dart';
 
 class FilesScreen_ extends State<FilesScreen> {
   final TextEditingController SearchController = TextEditingController();
@@ -131,10 +132,47 @@ class FilesScreen_ extends State<FilesScreen> {
                                       showDialog(
                                           context: context,
                                           builder: (context) => TranslateScreen(
-                                                FileID: data['id'],
-                                                FileName: FileName
-                                              ));
+                                              FileID: data['id'],
+                                              FileName: FileName));
                                     },
+                                    trailing: PopupMenuButton(
+                                        tooltip: "顯示更多",
+                                        itemBuilder: (context) => [
+                                              PopupMenuItem(
+                                                child: Text("翻譯"),
+                                                value: 1,
+                                              ),
+                                              PopupMenuItem(
+                                                child: Text("上傳翻譯"),
+                                                value: 2,
+                                              ),
+                                              PopupMenuItem(
+                                                child: Text("下載檔案"),
+                                                value: 3,
+                                              )
+                                            ],
+                                        onSelected: (int Index) {
+                                          switch (Index) {
+                                            case 1:
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      TranslateScreen(
+                                                          FileID: data['id'],
+                                                          FileName: FileName));
+                                              break;
+                                            case 2:
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      UploadTranslation(
+                                                          FileID: data['id'],
+                                                          FileName: data['name']));
+                                              break;
+                                            default:
+                                              break;
+                                          }
+                                        }),
                                   );
                                 });
                           } else if (snapshot.hasData &&

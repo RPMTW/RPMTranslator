@@ -49,7 +49,6 @@ class CrowdinAuthHandler {
               "refresh_token": refreshToken
             }));
     Map data = json.decode(response.body);
-
     if (response.statusCode == 200) {
       Map account = Account.get();
       Account.change({

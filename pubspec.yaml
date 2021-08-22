@@ -23,6 +23,11 @@ dependencies:
   oauth2:
   translator: ^0.1.7
   html: ^0.15.0
+  file_selector_platform_interface: ^2.0.0
+  file_selector_linux:
+  file_selector_macos:
+  file_selector_windows:
+  file_selector:
 
 dev_dependencies:
   flutter_test:
