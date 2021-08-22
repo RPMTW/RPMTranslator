@@ -866,17 +866,6 @@ class MachineTranslation extends StatelessWidget {
   Widget build(BuildContext context) {
     return Builder(builder: (context) {
       if (SelectStringInfo.containsKey('text')) {
-        // return FutureBuilder(
-        //     future: DeeplAPI.Translation(SelectStringInfo['text']),
-        //     builder: (context, AsyncSnapshot DeeplSnapshot) {
-        //       if (DeeplSnapshot.hasData) {
-        //         return Text(DeeplSnapshot.data);
-        //       } else if (DeeplSnapshot.hasError) {
-        //         return Text("取得機器翻譯失敗，錯誤原因 ${DeeplSnapshot.error}");
-        //       } else {
-        //         return Center(child: CircularProgressIndicator());
-        //       }
-        //     });
         return Column(
           children: [
             Text("機器翻譯", style: TextStyle(fontSize: 22)),
@@ -904,6 +893,28 @@ class MachineTranslation extends StatelessWidget {
                     return Center(child: CircularProgressIndicator());
                   }
                 }),
+            FutureBuilder(
+                future: DeeplAPI.Translation(SelectStringInfo['text']),
+                builder: (context, AsyncSnapshot DeeplSnapshot) {
+                  if (DeeplSnapshot.hasData) {
+                    return Tooltip(
+                      message: "複製譯文",
+                      child: ListTile(
+                          leading: Image.network(
+                              'https://www.deepl.com/img/favicon/favicon_32.png'),
+                          title: Text(DeeplSnapshot.data),
+                          subtitle: Text("由 Deepl 機器翻譯提供"),
+                          onTap: () {
+                            Clipboard.setData(
+                                ClipboardData(text: DeeplSnapshot.data));
+                          }),
+                    );
+                  } else if (DeeplSnapshot.hasError) {
+                    return Text("取得機器翻譯失敗，錯誤原因 ${DeeplSnapshot.error}");
+                  } else {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                })
           ],
         );
       } else {
