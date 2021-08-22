@@ -10,6 +10,7 @@ import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Utility/utility.dart';
 import 'package:rpmtranslator/Widget/OkClose.dart';
 import 'package:split_view/split_view.dart';
+import 'package:translator/translator.dart';
 
 class TranslateScreen_ extends State<TranslateScreen> {
   final TextEditingController SearchController = TextEditingController();
@@ -306,19 +307,6 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                 : Theme.of(context).scaffoldBackgroundColor,
                           ),
                         ),
-                        Expanded(
-                          child: ListTile(
-                            title: AutoSizeText("機器翻譯"),
-                            leading: Icon(Icons.translate),
-                            onTap: () {
-                              View3SelectedIndex = 2;
-                              setView3State(() {});
-                            },
-                            tileColor: View3SelectedIndex == 2
-                                ? Colors.white12
-                                : Theme.of(context).scaffoldBackgroundColor,
-                          ),
-                        ),
                       ]),
                     ),
                     Builder(builder: (context) {
@@ -332,25 +320,6 @@ class TranslateScreen_ extends State<TranslateScreen> {
                               title_: title_);
                         case 1:
                           return Text("詞彙");
-                        case 2:
-                          return Builder(builder: (context) {
-                            return Container();
-                            // if (SelectStringInfo.containsKey('text')) {
-                            //   return FutureBuilder(
-                            //       future: DeeplAPI.Translation(SelectStringInfo['text']),
-                            //       builder: (context, AsyncSnapshot DeeplSnapshot) {
-                            //         if (DeeplSnapshot.hasData) {
-                            //           return Text(DeeplSnapshot.data);
-                            //         } else if (DeeplSnapshot.hasError) {
-                            //           return Text("取得機器翻譯失敗，錯誤原因 ${DeeplSnapshot.error}");
-                            //         } else {
-                            //           return Center(child: CircularProgressIndicator());
-                            //         }
-                            //       });
-                            // } else {
-                            //   return Container();
-                            // }
-                          });
                         default:
                           return Container();
                       }
@@ -623,8 +592,6 @@ class TranslateScreen_ extends State<TranslateScreen> {
                   children: [
                     Text("其他翻譯", style: TextStyle(fontSize: 22)),
                     Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height / 5,
                       child: Builder(builder: (context) {
                         final ScrollController
                             StringTranslationsScrollController =
@@ -740,8 +707,13 @@ class TranslateScreen_ extends State<TranslateScreen> {
                   ],
                 ),
               ),
+              Container(
+                  child: SingleChildScrollView(
+                      controller: ScrollController(),
+                      child: MachineTranslation(
+                          SelectStringInfo: SelectStringInfo))),
             ],
-            controller: SplitViewController(weights: [0.7, 0.3]),
+            controller: SplitViewController(weights: [0.6, 0.25, 0.15]),
             viewMode: SplitViewMode.Vertical,
             gripSize: 2,
             gripColor: Colors.white12,
@@ -877,6 +849,67 @@ class TranslateScreen_ extends State<TranslateScreen> {
             return Center(child: CircularProgressIndicator());
           }
         });
+  }
+}
+
+class MachineTranslation extends StatelessWidget {
+  final Map SelectStringInfo;
+
+  const MachineTranslation({
+    required this.SelectStringInfo,
+    Key? key,
+  }) : super(key: key);
+
+  static final translator = GoogleTranslator();
+
+  @override
+  Widget build(BuildContext context) {
+    return Builder(builder: (context) {
+      if (SelectStringInfo.containsKey('text')) {
+        // return FutureBuilder(
+        //     future: DeeplAPI.Translation(SelectStringInfo['text']),
+        //     builder: (context, AsyncSnapshot DeeplSnapshot) {
+        //       if (DeeplSnapshot.hasData) {
+        //         return Text(DeeplSnapshot.data);
+        //       } else if (DeeplSnapshot.hasError) {
+        //         return Text("取得機器翻譯失敗，錯誤原因 ${DeeplSnapshot.error}");
+        //       } else {
+        //         return Center(child: CircularProgressIndicator());
+        //       }
+        //     });
+        return Column(
+          children: [
+            Text("機器翻譯", style: TextStyle(fontSize: 22)),
+            FutureBuilder(
+                future:
+                    translator.translate(SelectStringInfo['text'], to: 'zh-tw'),
+                builder: (context, AsyncSnapshot GoogleSnapshot) {
+                  if (GoogleSnapshot.hasData) {
+                    return Tooltip(
+                      message: "複製譯文",
+                      child: ListTile(
+                          leading: Image.network(
+                              'https://www.google.com/favicon.ico'),
+                          title: Text(GoogleSnapshot.data.text),
+                          subtitle: Text("由 Google 機器翻譯提供"),
+                          onTap: () {
+                            Clipboard.setData(
+                                ClipboardData(text: GoogleSnapshot.data.text));
+                          }),
+                    );
+                  } else if (GoogleSnapshot.hasError) {
+                    return Text(
+                        "取得 Google 機器翻譯失敗，錯誤原因 ${GoogleSnapshot.error}");
+                  } else {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                }),
+          ],
+        );
+      } else {
+        return Container();
+      }
+    });
   }
 }
 
