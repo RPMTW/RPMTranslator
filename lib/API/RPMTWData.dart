@@ -16,6 +16,8 @@ class RPMTWData {
   static String MarkUp = 'up';
   static String MarkDown = 'down';
   static Map<String, String> UserAgent = {'User-Agent': 'RPMTranslator'};
+  static String Comment = 'comment';
+  static String CommentIssue = 'issue';
 
   static Map<String, String> ErrorMessage = {
     "Forbidden": "沒有存取權限",

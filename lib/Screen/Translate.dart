@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, unused_local_variable, file_names, avoid_print, prefer_const_constructors, unnecessary_new, camel_case_types, annotate_overrides, prefer_const_literals_to_create_immutables, prefer_equal_for_default_values, unused_element, avoid_unnecessary_containers, use_key_in_widget_constructors, sized_box_for_whitespace, no_logic_in_create_state, curly_braces_in_flow_control_structures, unrelated_type_equality_checks
+// ignore_for_file: non_constant_identifier_names, unused_local_variable, file_names, avoid_print, prefer_const_constructors, unnecessary_new, camel_case_types, annotate_overrides, prefer_const_literals_to_create_immutables, prefer_equal_for_default_values, unused_element, avoid_unnecessary_containers, use_key_in_widget_constructors, sized_box_for_whitespace, no_logic_in_create_state, curly_braces_in_flow_control_structures, unrelated_type_equality_checks, prefer_typing_uninitialized_variables
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -23,7 +23,7 @@ class TranslateScreen_ extends State<TranslateScreen> {
   int SelectIndex = -1;
   int StringPage = 0;
   Map SelectStringInfo = {};
-  int View3SelectedIndex = 0;
+  int View3SelectedIndex = -1;
   late StateSetter setView3State;
   late StateSetter setView2State;
   TranslateScreen_({required this.FileID, required this.FileName});
@@ -207,6 +207,7 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                                   SelectStringInfo = StringInfo;
                                                   setModListState(() {});
                                                   setView2State(() {});
+                                                  View3SelectedIndex = 0;
                                                   setView3State(() {});
                                                 },
                                                 tileColor: SelectIndex == index
@@ -320,9 +321,40 @@ class TranslateScreen_ extends State<TranslateScreen> {
                         ),
                       ]),
                     ),
-                    Focus(
-                        autofocus: true,
-                        child: View3Widgets[View3SelectedIndex])
+                    Builder(builder: (context) {
+                      switch (View3SelectedIndex) {
+                        case 0:
+                          return CommentView(
+                              SelectStringInfo: SelectStringInfo,
+                              CommentTextController: CommentTextController,
+                              TranslateTextController: TranslateTextController,
+                              setView3State: setView3State,
+                              title_: title_);
+                        case 1:
+                          return Text("詞彙");
+                        case 2:
+                          return Builder(builder: (context) {
+                            return Container();
+                            // if (SelectStringInfo.containsKey('text')) {
+                            //   return FutureBuilder(
+                            //       future: DeeplAPI.Translation(SelectStringInfo['text']),
+                            //       builder: (context, AsyncSnapshot DeeplSnapshot) {
+                            //         if (DeeplSnapshot.hasData) {
+                            //           return Text(DeeplSnapshot.data);
+                            //         } else if (DeeplSnapshot.hasError) {
+                            //           return Text("取得機器翻譯失敗，錯誤原因 ${DeeplSnapshot.error}");
+                            //         } else {
+                            //           return Center(child: CircularProgressIndicator());
+                            //         }
+                            //       });
+                            // } else {
+                            //   return Container();
+                            // }
+                          });
+                        default:
+                          return Container();
+                      }
+                    })
                   ],
                   controller: SplitViewController(
                       weights: [0.05],
@@ -341,266 +373,6 @@ class TranslateScreen_ extends State<TranslateScreen> {
             gripSize: 3,
             viewMode: SplitViewMode.Horizontal));
   }
-
-  late List<Widget> View3Widgets = [
-    Builder(builder: (context) {
-      print(SelectStringInfo);
-      if (SelectStringInfo.containsKey('text')) {
-        print("test2");
-        return FutureBuilder(
-            future: CrowdinAPI.getCommentsByString(
-                Account.getToken(), SelectStringInfo['id'], 0),
-            builder: (context, AsyncSnapshot CommentsSnapshot) {
-              if (CommentsSnapshot.hasData) {
-                return Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        ListView.builder(
-                            itemCount: CommentsSnapshot.data.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, int Index) {
-                              Map Comment =
-                                  CommentsSnapshot.data[Index]['data'];
-                              Map CommentUser = Comment['user'];
-                              return ListTile(
-                                leading: ClipRRect(
-                                  borderRadius: BorderRadius.circular(50.0),
-                                  child: Image.network(
-                                    CommentUser["avatarUrl"],
-                                    width: 50,
-                                    height: 50,
-                                    fit: BoxFit.fill,
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return CircularProgressIndicator(
-                                        value: loadingProgress
-                                                    .expectedTotalBytes !=
-                                                null
-                                            ? loadingProgress
-                                                    .cumulativeBytesLoaded
-                                                    .toInt() /
-                                                loadingProgress
-                                                    .expectedTotalBytes!
-                                                    .toInt()
-                                            : null,
-                                      );
-                                    },
-                                  ),
-                                ),
-                                title: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      Comment['text'],
-                                    ),
-                                    Text(
-                                        "${CommentUser['username']} (${CommentUser['fullName'] ?? ""})",
-                                        style: TextStyle(color: Colors.blue)),
-                                    Text(
-                                        RPMTWData.FormatIsoTime(
-                                            Comment['createdAt']),
-                                        style: TextStyle(color: Colors.white70))
-                                  ],
-                                ),
-                                subtitle: Comment['type'] == 'issue'
-                                    ? Comment['issueStatus'] == 'unresolved'
-                                        ? Text("未解決")
-                                        : Text("已解決")
-                                    : Container(),
-                                tileColor: Comment['type'] == 'issue' &&
-                                        Comment['issueStatus'] == 'unresolved'
-                                    ? Colors.red
-                                    : Theme.of(context).scaffoldBackgroundColor,
-                                onTap: () {},
-                              );
-                            }),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Text("討論", style: TextStyle(fontSize: 25)),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Expanded(
-                                child: TextField(
-                              keyboardType: TextInputType.multiline,
-                              maxLines: null,
-                              textAlign: TextAlign.center,
-                              controller: CommentTextController,
-                              decoration: InputDecoration(
-                                hintText: "新增討論...",
-                                hintStyle: TextStyle(),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.white12, width: 3.0),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.lightBlue, width: 3.0),
-                                ),
-                                contentPadding:
-                                    EdgeInsets.symmetric(vertical: 20.0),
-                                border: InputBorder.none,
-                                errorBorder: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                              ),
-                            )),
-                            SizedBox(
-                              width: 15,
-                            ),
-                            ElevatedButton(
-                              style: new ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
-                                      Colors.deepPurpleAccent)),
-                              onPressed: () async {
-                                showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) =>
-                                        Builder(builder: (context) {
-                                          if (CommentTextController
-                                              .text.isEmpty) {
-                                            return AlertDialog(
-                                              title: Text("新增翻譯失敗",
-                                                  textAlign: TextAlign.center),
-                                              content: Text("譯文不能是空的"),
-                                              actions: [
-                                                TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: Text("確定"))
-                                              ],
-                                            );
-                                          } else {
-                                            return FutureBuilder(
-                                                future:
-                                                    CrowdinAPI.addTranslation(
-                                                        Account.getToken(),
-                                                        SelectStringInfo['id'],
-                                                        TranslateTextController
-                                                            .text),
-                                                builder: (context,
-                                                    AsyncSnapshot<Map?>
-                                                        snapshot) {
-                                                  if (snapshot.hasData) {
-                                                    Map? data = snapshot.data;
-                                                    if (data != null &&
-                                                        !data.containsKey(
-                                                            'errors')) {
-                                                      return AlertDialog(
-                                                        title: Text(
-                                                            "成功新增翻譯，感謝您的翻譯貢獻",
-                                                            textAlign: TextAlign
-                                                                .center),
-                                                        actions: [
-                                                          TextButton(
-                                                              onPressed: () {
-                                                                Navigator.pop(
-                                                                    context);
-                                                                setView2State(
-                                                                    () {});
-                                                              },
-                                                              child: Text("確定"))
-                                                        ],
-                                                      );
-                                                    } else if (data != null &&
-                                                        data.containsKey(
-                                                            'errors')) {
-                                                      Map error = data['errors']
-                                                              [0]['error']
-                                                          ['errors'][0];
-                                                      String errorMessage =
-                                                          error['message'];
-                                                      String errorCode =
-                                                          error['code'];
-                                                      return AlertDialog(
-                                                        title: Text("新增翻譯失敗",
-                                                            textAlign: TextAlign
-                                                                .center),
-                                                        content: Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: [
-                                                            Text(
-                                                                "錯誤代碼: $errorCode"),
-                                                            Text(
-                                                                "錯誤訊息: ${RPMTWData.TranslateErrorMessage(errorMessage)}")
-                                                          ],
-                                                        ),
-                                                        actions: [OkClose()],
-                                                      );
-                                                    } else {
-                                                      return AlertDialog(
-                                                        title: Text("發生未知錯誤",
-                                                            textAlign: TextAlign
-                                                                .center),
-                                                        actions: [OkClose()],
-                                                      );
-                                                    }
-                                                  } else {
-                                                    return Center(
-                                                        child:
-                                                            CircularProgressIndicator());
-                                                  }
-                                                });
-                                          }
-                                        }));
-                              },
-                              child: Text(
-                                "送出",
-                                style: title_,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 15,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              } else if (CommentsSnapshot.hasError) {
-                return Text("取得討論失敗，錯誤原因 ${CommentsSnapshot.error}");
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
-            });
-      } else {
-        return Container();
-      }
-    }),
-    Text("詞彙"),
-    Builder(builder: (context) {
-      return Container();
-      // if (SelectStringInfo.containsKey('text')) {
-      //   return FutureBuilder(
-      //       future: DeeplAPI.Translation(SelectStringInfo['text']),
-      //       builder: (context, AsyncSnapshot DeeplSnapshot) {
-      //         if (DeeplSnapshot.hasData) {
-      //           return Text(DeeplSnapshot.data);
-      //         } else if (DeeplSnapshot.hasError) {
-      //           return Text("取得機器翻譯失敗，錯誤原因 ${DeeplSnapshot.error}");
-      //         } else {
-      //           return Center(child: CircularProgressIndicator());
-      //         }
-      //       });
-      // } else {
-      //   return Container();
-      // }
-    }),
-  ];
 
   Builder TranslationStringView() {
     return Builder(builder: (context) {
@@ -1105,6 +877,265 @@ class TranslateScreen_ extends State<TranslateScreen> {
             return Center(child: CircularProgressIndicator());
           }
         });
+  }
+}
+
+class CommentView extends StatelessWidget {
+  const CommentView({
+    Key? key,
+    required this.SelectStringInfo,
+    required this.CommentTextController,
+    required this.TranslateTextController,
+    required this.setView3State,
+    required this.title_,
+  }) : super(key: key);
+
+  final Map SelectStringInfo;
+  final TextEditingController CommentTextController;
+  final TextEditingController TranslateTextController;
+  final StateSetter setView3State;
+  final TextStyle title_;
+  static var CommentsSnapshot;
+
+  @override
+  Widget build(BuildContext context) {
+    return Builder(builder: (context) {
+      if (SelectStringInfo.containsKey('text')) {
+        return FutureBuilder(
+            future: CrowdinAPI.getCommentsByString(
+                Account.getToken(), SelectStringInfo['id'], 0),
+            builder: (context, AsyncSnapshot CommentsSnapshot_) {
+              if (CommentsSnapshot_.hasData &&
+                  CommentsSnapshot != CommentsSnapshot_.data) {
+                CommentsSnapshot = CommentsSnapshot_.data;
+                return Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        ListView.builder(
+                            itemCount: CommentsSnapshot.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, int Index) {
+                              Map Comment = CommentsSnapshot[Index]['data'];
+                              Map CommentUser = Comment['user'];
+                              return ListTile(
+                                leading: ClipRRect(
+                                  borderRadius: BorderRadius.circular(50.0),
+                                  child: Image.network(
+                                    CommentUser["avatarUrl"],
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.fill,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return CircularProgressIndicator(
+                                        value: loadingProgress
+                                                    .expectedTotalBytes !=
+                                                null
+                                            ? loadingProgress
+                                                    .cumulativeBytesLoaded
+                                                    .toInt() /
+                                                loadingProgress
+                                                    .expectedTotalBytes!
+                                                    .toInt()
+                                            : null,
+                                      );
+                                    },
+                                  ),
+                                ),
+                                title: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      Comment['text'],
+                                    ),
+                                    Text(
+                                        "${CommentUser['username']} (${CommentUser['fullName'] ?? ""})",
+                                        style: TextStyle(color: Colors.blue)),
+                                    Text(
+                                        RPMTWData.FormatIsoTime(
+                                            Comment['createdAt']),
+                                        style: TextStyle(color: Colors.white70))
+                                  ],
+                                ),
+                                subtitle: Comment['type'] == 'issue'
+                                    ? Comment['issueStatus'] == 'unresolved'
+                                        ? Text("未解決")
+                                        : Text("已解決")
+                                    : Container(),
+                                tileColor: Comment['type'] == 'issue' &&
+                                        Comment['issueStatus'] == 'unresolved'
+                                    ? Colors.red
+                                    : Theme.of(context).scaffoldBackgroundColor,
+                                onTap: () {},
+                              );
+                            }),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        Text("討論", style: TextStyle(fontSize: 25)),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 15,
+                            ),
+                            Expanded(
+                                child: TextField(
+                              keyboardType: TextInputType.multiline,
+                              maxLines: null,
+                              textAlign: TextAlign.center,
+                              controller: CommentTextController,
+                              decoration: InputDecoration(
+                                hintText: "新增討論...",
+                                hintStyle: TextStyle(),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.white12, width: 3.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.lightBlue, width: 3.0),
+                                ),
+                                contentPadding:
+                                    EdgeInsets.symmetric(vertical: 20.0),
+                                border: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                              ),
+                            )),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            ElevatedButton(
+                              style: new ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Colors.deepPurpleAccent)),
+                              onPressed: () async {
+                                showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (context) =>
+                                        Builder(builder: (context) {
+                                          if (CommentTextController
+                                              .text.isEmpty) {
+                                            return AlertDialog(
+                                              title: Text("新增討論失敗",
+                                                  textAlign: TextAlign.center),
+                                              content: Text("討論內文不能是空的"),
+                                              actions: [
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text("確定"))
+                                              ],
+                                            );
+                                          } else {
+                                            return FutureBuilder(
+                                                future: CrowdinAPI.addComment(
+                                                  Account.getToken(),
+                                                  SelectStringInfo['id'],
+                                                  CommentTextController.text,
+                                                  RPMTWData.Comment,
+                                                ),
+                                                builder: (context,
+                                                    AsyncSnapshot<Map?>
+                                                        snapshot) {
+                                                  if (snapshot.hasData) {
+                                                    Map? data = snapshot.data;
+                                                    if (data != null &&
+                                                        !data.containsKey(
+                                                            'errors')) {
+                                                      return AlertDialog(
+                                                        title: Text(
+                                                            "成功新增討論，感謝您的貢獻",
+                                                            textAlign: TextAlign
+                                                                .center),
+                                                        actions: [
+                                                          TextButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                                setView3State(
+                                                                    () {});
+                                                              },
+                                                              child: Text("確定"))
+                                                        ],
+                                                      );
+                                                    } else if (data != null &&
+                                                        data.containsKey(
+                                                            'errors')) {
+                                                      Map error = data['errors']
+                                                              [0]['error']
+                                                          ['errors'][0];
+                                                      String errorMessage =
+                                                          error['message'];
+                                                      String errorCode =
+                                                          error['code'];
+                                                      return AlertDialog(
+                                                        title: Text("新增討論失敗",
+                                                            textAlign: TextAlign
+                                                                .center),
+                                                        content: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            Text(
+                                                                "錯誤代碼: $errorCode"),
+                                                            Text(
+                                                                "錯誤訊息: ${RPMTWData.TranslateErrorMessage(errorMessage)}")
+                                                          ],
+                                                        ),
+                                                        actions: [OkClose()],
+                                                      );
+                                                    } else {
+                                                      return AlertDialog(
+                                                        title: Text("發生未知錯誤",
+                                                            textAlign: TextAlign
+                                                                .center),
+                                                        actions: [OkClose()],
+                                                      );
+                                                    }
+                                                  } else {
+                                                    return Center(
+                                                        child:
+                                                            CircularProgressIndicator());
+                                                  }
+                                                });
+                                          }
+                                        }));
+                              },
+                              child: Text(
+                                "送出",
+                                style: title_,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              } else if (CommentsSnapshot_.hasError) {
+                return Text("取得討論失敗，錯誤原因 ${CommentsSnapshot_.error}");
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            });
+      } else {
+        return Container();
+      }
+    });
   }
 }
 

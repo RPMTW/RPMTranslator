@@ -130,4 +130,29 @@ class CrowdinAPI {
     dynamic data = await baseGet(Token, url);
     return data;
   }
+
+  static Future<Map?> addComment(
+      String Token, int StringID, String text, String Type,
+      [issueType]) async {
+    String url = "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/comments";
+
+    Map Json = {
+      "text": text,
+      "stringId": StringID,
+      "targetLanguageId": RPMTWData.TraditionalChineseTaiwan,
+      "type": Type
+    };
+
+    if (issueType != null) {
+      Json['issueType'] = issueType;
+    }
+
+    Response response = await basePost(Token, url, Json);
+    Map data = json.decode(response.body);
+    return response.statusCode == 400
+        ? data
+        : data.containsKey('error')
+            ? null
+            : data['data'];
+  }
 }
