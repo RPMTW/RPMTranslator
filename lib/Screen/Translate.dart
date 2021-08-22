@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:rpmtranslator/API/CrowdinAPI.dart';
-import 'package:rpmtranslator/API/ModernMTAPI.dart';
+import 'package:rpmtranslator/API/TranslationAPI.dart';
 import 'package:rpmtranslator/API/RPMTWData.dart';
 import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Utility/utility.dart';
@@ -714,7 +714,7 @@ class TranslateScreen_ extends State<TranslateScreen> {
                       child: MachineTranslation(
                           SelectStringInfo: SelectStringInfo))),
             ],
-            controller: SplitViewController(weights: [0.5, 0.25, 0.25]),
+            controller: SplitViewController(weights: [0.45, 0.25, 0.30]),
             viewMode: SplitViewMode.Vertical,
             gripSize: 2,
             gripColor: Colors.white12,
@@ -894,23 +894,48 @@ class MachineTranslation extends StatelessWidget {
                   }
                 }),
             FutureBuilder(
-                future: ModernMTAPI.Translation(SelectStringInfo['text']),
-                builder: (context, AsyncSnapshot DeeplSnapshot) {
-                  if (DeeplSnapshot.hasData) {
+                future: TranslationAPI.TranslationWithModernMT(
+                    SelectStringInfo['text']),
+                builder: (context, AsyncSnapshot ModernMTSnapshot) {
+                  if (ModernMTSnapshot.hasData) {
                     return Tooltip(
                       message: "複製譯文",
                       child: ListTile(
                           leading: Image.network(
                               'https://www.modernmt.com/assets/images/favicon/favicon.ico'),
-                          title: Text(DeeplSnapshot.data),
+                          title: Text(ModernMTSnapshot.data),
                           subtitle: Text("由 ModernMT 翻譯提供"),
                           onTap: () {
                             Clipboard.setData(
-                                ClipboardData(text: DeeplSnapshot.data));
+                                ClipboardData(text: ModernMTSnapshot.data));
                           }),
                     );
-                  } else if (DeeplSnapshot.hasError) {
-                    return Text("取得 ModernMT 翻譯失敗，錯誤原因 ${DeeplSnapshot.error}");
+                  } else if (ModernMTSnapshot.hasError) {
+                    return Text(
+                        "取得 ModernMT 翻譯失敗，錯誤原因 ${ModernMTSnapshot.error}");
+                  } else {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                }),
+            FutureBuilder(
+                future: TranslationAPI.TranslationWithYandex(
+                    SelectStringInfo['text']),
+                builder: (context, AsyncSnapshot YandexSnapshot) {
+                  if (YandexSnapshot.hasData) {
+                    return Tooltip(
+                      message: "複製譯文",
+                      child: ListTile(
+                          leading: Image.network(
+                              'https://translate.yandex.com/icons/favicon.ico'),
+                          title: Text(YandexSnapshot.data),
+                          subtitle: Text("由 Yandex 翻譯提供"),
+                          onTap: () {
+                            Clipboard.setData(
+                                ClipboardData(text: YandexSnapshot.data));
+                          }),
+                    );
+                  } else if (YandexSnapshot.hasError) {
+                    return Text("取得 Yandex 翻譯失敗，錯誤原因 ${YandexSnapshot.error}");
                   } else {
                     return Center(child: CircularProgressIndicator());
                   }
