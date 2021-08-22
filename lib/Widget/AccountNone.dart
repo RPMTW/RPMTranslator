@@ -2,7 +2,9 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmtranslator/API/CrowdinAPI.dart';
 import 'package:rpmtranslator/Account/Account.dart';
+import 'package:rpmtranslator/Account/CrowdinAuth.dart';
 import 'package:rpmtranslator/Screen/CrowdinOauth.dart';
 import 'package:rpmtranslator/Widget/OkClose.dart';
 
@@ -14,44 +16,46 @@ class AccountNone extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (Account.has() && Account.expired()) {
-      return FutureBuilder(builder: (context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data == true) {
-            return AlertDialog(
-              title: Text("提示訊息"),
-              content: Text("更新登入憑證成功"),
-              actions: [OkClose()],
-            );
-          } else {
-            return AlertDialog(
-              title: Text("錯誤訊息"),
-              content: Text("更新登入憑證失敗，請手動重新登入"),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      showDialog(
-                          context: context,
-                          builder: (context) => CrowdinAuthScreen());
-                    },
-                    child: Text("確定"))
-              ],
-            );
-          }
-        } else {
-          return AlertDialog(
-            title: Text("錯誤訊息"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text("偵測到您的 Crowdin 登入憑證已過期，正在嘗試更新登入憑證..."),
-                SizedBox(height: 12),
-                CircularProgressIndicator()
-              ],
-            ),
-          );
-        }
-      });
+      return FutureBuilder(
+          future: CrowdinAuthHandler.RefreshToken(Account.getRefreshToken()),
+          builder: (context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data == true) {
+                return AlertDialog(
+                  title: Text("提示訊息"),
+                  content: Text("更新登入憑證成功"),
+                  actions: [OkClose()],
+                );
+              } else {
+                return AlertDialog(
+                  title: Text("錯誤訊息"),
+                  content: Text("更新登入憑證失敗，請手動重新登入"),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          showDialog(
+                              context: context,
+                              builder: (context) => CrowdinAuthScreen());
+                        },
+                        child: Text("確定"))
+                  ],
+                );
+              }
+            } else {
+              return AlertDialog(
+                title: Text("錯誤訊息"),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("偵測到您的 Crowdin 登入憑證已過期，正在嘗試更新登入憑證..."),
+                    SizedBox(height: 12),
+                    CircularProgressIndicator()
+                  ],
+                ),
+              );
+            }
+          });
     } else {
       return AlertDialog(
         title: Text("提示訊息"),

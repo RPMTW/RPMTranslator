@@ -34,8 +34,17 @@ class Account {
     return _account.containsKey('Expired') ? _account["Expired"] : false;
   }
 
+  static void setExpired(bool s) {
+    _account["Expired"] = s;
+    save();
+  }
+
   static String getToken() {
     return _account["AccessToken"];
+  }
+
+  static String getRefreshToken() {
+    return _account["RefreshToken"];
   }
 
   static int getUserID() {

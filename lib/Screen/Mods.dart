@@ -166,7 +166,7 @@ class ModsScreen_ extends State<ModsScreen> {
                                       Page),
                                   builder: (context, AsyncSnapshot snapshot) {
                                     if (snapshot.hasData &&
-                                        snapshot.data != null) {
+                                        snapshot.data is List) {
                                       return ListView.builder(
                                           shrinkWrap: true,
                                           controller: ModScrollController,
@@ -292,7 +292,9 @@ class ModsScreen_ extends State<ModsScreen> {
                                                 });
                                           });
                                     } else if (snapshot.hasData &&
-                                        snapshot.data == null) {
+                                        snapshot.data is String &&
+                                        snapshot.data == "Unauthorized") {
+                                      Account.setExpired(true);
                                       return AccountNone();
                                     } else if (snapshot.hasData &&
                                         snapshot.data is Map &&

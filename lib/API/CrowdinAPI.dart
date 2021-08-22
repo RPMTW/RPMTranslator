@@ -14,9 +14,9 @@ class CrowdinAPI {
       'Authorization': 'Bearer $Token'
     };
     headers.addAll(RPMTWData.UserAgent);
-    Map data =
-        json.decode((await http.get(Uri.parse(url), headers: headers)).body);
-    return data.containsKey('error') ? data : data['data'];
+    Response response = await http.get(Uri.parse(url), headers: headers);
+    Map data = json.decode(response.body);
+    return data.containsKey('error') ? response : data['data'];
   }
 
   static Future<Response> basePost(String Token, String url, Map Json) async {
@@ -30,15 +30,18 @@ class CrowdinAPI {
     return response;
   }
 
-  static Future<List?> getModsByVersion(
+  static Future<dynamic> getModsByVersion(
       String Token, String Version, String filter, int Page) async {
     int DirID = RPMTWData.VersionDirID[Version] ?? 33894;
     filter = filter == "" ? "" : "&filter=$filter";
     String url =
         "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/directories?directoryId=$DirID&offset=${Page * 20}&limit=20$filter";
     dynamic data = await baseGet(Token, url);
-
-    return data;
+    return data.runtimeType == Response
+        ? (data.statusCode == 401
+            ? json.decode(data.body)['error']['message']
+            : null)
+        : data;
   }
 
   static Future<List?> getFilesByDir(

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:rpmtranslator/API/CrowdinAPI.dart';
-import 'package:rpmtranslator/API/DeeplAPI.dart';
+import 'package:rpmtranslator/API/ModernMTAPI.dart';
 import 'package:rpmtranslator/API/RPMTWData.dart';
 import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Utility/utility.dart';
@@ -161,6 +161,7 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                         height:
                                             MediaQuery.of(context).size.height,
                                         child: ListView.builder(
+                                            controller: ScrollController(),
                                             shrinkWrap: true,
                                             itemCount: snapshot.data!.length,
                                             itemBuilder: (context, int index) {
@@ -713,7 +714,7 @@ class TranslateScreen_ extends State<TranslateScreen> {
                       child: MachineTranslation(
                           SelectStringInfo: SelectStringInfo))),
             ],
-            controller: SplitViewController(weights: [0.6, 0.25, 0.15]),
+            controller: SplitViewController(weights: [0.5, 0.25, 0.25]),
             viewMode: SplitViewMode.Vertical,
             gripSize: 2,
             gripColor: Colors.white12,
@@ -880,37 +881,36 @@ class MachineTranslation extends StatelessWidget {
                           leading: Image.network(
                               'https://www.google.com/favicon.ico'),
                           title: Text(GoogleSnapshot.data.text),
-                          subtitle: Text("由 Google 機器翻譯提供"),
+                          subtitle: Text("由 Google 翻譯提供"),
                           onTap: () {
                             Clipboard.setData(
                                 ClipboardData(text: GoogleSnapshot.data.text));
                           }),
                     );
                   } else if (GoogleSnapshot.hasError) {
-                    return Text(
-                        "取得 Google 機器翻譯失敗，錯誤原因 ${GoogleSnapshot.error}");
+                    return Text("取得 Google 翻譯失敗，錯誤原因 ${GoogleSnapshot.error}");
                   } else {
                     return Center(child: CircularProgressIndicator());
                   }
                 }),
             FutureBuilder(
-                future: DeeplAPI.Translation(SelectStringInfo['text']),
+                future: ModernMTAPI.Translation(SelectStringInfo['text']),
                 builder: (context, AsyncSnapshot DeeplSnapshot) {
                   if (DeeplSnapshot.hasData) {
                     return Tooltip(
                       message: "複製譯文",
                       child: ListTile(
                           leading: Image.network(
-                              'https://www.deepl.com/img/favicon/favicon_32.png'),
+                              'https://www.modernmt.com/assets/images/favicon/favicon.ico'),
                           title: Text(DeeplSnapshot.data),
-                          subtitle: Text("由 Deepl 機器翻譯提供"),
+                          subtitle: Text("由 ModernMT 翻譯提供"),
                           onTap: () {
                             Clipboard.setData(
                                 ClipboardData(text: DeeplSnapshot.data));
                           }),
                     );
                   } else if (DeeplSnapshot.hasError) {
-                    return Text("取得 Deepl 機器翻譯失敗，錯誤原因 ${DeeplSnapshot.error}");
+                    return Text("取得 ModernMT 翻譯失敗，錯誤原因 ${DeeplSnapshot.error}");
                   } else {
                     return Center(child: CircularProgressIndicator());
                   }
