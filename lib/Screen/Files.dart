@@ -167,7 +167,8 @@ class FilesScreen_ extends State<FilesScreen> {
                                                   builder: (context) =>
                                                       UploadTranslation(
                                                           FileID: data['id'],
-                                                          FileName: data['name']));
+                                                          FileName:
+                                                              data['name']));
                                               break;
                                             default:
                                               break;

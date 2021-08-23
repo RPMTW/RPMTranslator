@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import 'package:rpmtranslator/API/CrowdinAPI.dart';
 import 'package:rpmtranslator/Account/Account.dart';
+import 'package:rpmtranslator/Widget/OkClose.dart';
 
 class UploadTranslation extends StatefulWidget {
   final int FileID;
@@ -45,7 +46,49 @@ class _UploadTranslationState extends State<UploadTranslation> {
                       label: "翻譯檔案", extensions: [path.extension(FileName)])
                 ]);
                 if (file != null) {
-                  CrowdinAPI.addStorage(Account.getToken(), File(file.path));
+                  Navigator.pop(context);
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return FutureBuilder(
+                            future: CrowdinAPI.updateTranslation(
+                                Account.getToken(),
+                                File(file.path),
+                                FileID,
+                                FileName),
+                            builder: (context, AsyncSnapshot snapshot) {
+                              if (snapshot.hasData) {
+                                if (snapshot.data == true) {
+                                  return AlertDialog(
+                                    title: Text("上傳成功"),
+                                    actions: [OkClose()],
+                                  );
+                                } else {
+                                  return AlertDialog(
+                                    title: Text("上傳失敗"),
+                                    actions: [OkClose()],
+                                  );
+                                }
+                              } else {
+                                return AlertDialog(
+                                  title: Text("上傳檔案至 Crowdin 伺服器中..."),
+                                  content: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      CircularProgressIndicator(),
+                                      SizedBox(
+                                        height: 20,
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }
+                            });
+                      });
                 } else {
                   return;
                 }

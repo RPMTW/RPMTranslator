@@ -164,14 +164,31 @@ class CrowdinAPI {
             : data['data'];
   }
 
-  static Future<Map?> addStorage(String Token, File file) async {
+  static Future<bool> updateTranslation(
+      String Token, File file, int FileID, String FileName) async {
+    String url =
+        "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/translations/${RPMTWData.TraditionalChineseTaiwan}";
+
+    int? storageId = await CrowdinAPI.addStorage(Token, file, FileName);
+
+    if (storageId == null) return false;
+
+    Map Json = {"storageId": storageId, "fileId": FileID};
+
+    Response response = await basePost(Token, url, Json);
+    Map data = json.decode(response.body);
+    return response.statusCode == 200 ? true : false;
+  }
+
+  static Future<int?> addStorage(
+      String Token, File file, String FileName) async {
     String url = "$CrowdinBaseAPI/storages";
 
     Response response = await basePost(Token, url, file.readAsBytesSync(), {
-      "Crowdin-API-FileName": path.basename(file.path),
+      "Crowdin-API-FileName": FileName,
       "Content-Type": "application/octet-stream"
     });
     Map data = json.decode(response.body);
-    return data;
+    return response.statusCode == 201 ? data['data']['id'] : null;
   }
 }

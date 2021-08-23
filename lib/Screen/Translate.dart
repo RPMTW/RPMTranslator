@@ -1114,13 +1114,7 @@ class CommentView extends StatelessWidget {
                                               title: Text("新增討論失敗",
                                                   textAlign: TextAlign.center),
                                               content: Text("討論內文不能是空的"),
-                                              actions: [
-                                                TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: Text("確定"))
-                                              ],
+                                              actions: [OkClose()],
                                             );
                                           } else {
                                             return FutureBuilder(

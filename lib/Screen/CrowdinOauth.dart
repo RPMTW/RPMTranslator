@@ -185,6 +185,7 @@ class _CrowdinOauthState extends State<CrowdinAuthScreen> {
   }
 }
 
+
 class _JsonAcceptingHttpClient extends http.BaseClient {
   final _httpClient = http.Client();
 
