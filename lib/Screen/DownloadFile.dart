@@ -8,23 +8,26 @@ import 'package:flutter/material.dart';
 import 'package:rpmtranslator/API/CrowdinAPI.dart';
 import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Widget/OkClose.dart';
+import 'package:path/path.dart' as Path;
 
 class DownloadFile extends StatefulWidget {
   final int FileID;
+  final String FileName;
   const DownloadFile({
     required this.FileID,
+    required this.FileName,
     Key? key,
   }) : super(key: key);
 
   @override
-  State<DownloadFile> createState() => _DownloadFileState(FileID: FileID);
+  State<DownloadFile> createState() =>
+      _DownloadFileState(FileID: FileID, FileName: FileName);
 }
 
 class _DownloadFileState extends State<DownloadFile> {
   final int FileID;
-  _DownloadFileState({
-    required this.FileID,
-  });
+  final String FileName;
+  _DownloadFileState({required this.FileID, required this.FileName});
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +37,11 @@ class _DownloadFileState extends State<DownloadFile> {
         actions: [
           TextButton(
               onPressed: () async {
-                final String? path =
-                    await FileSelectorPlatform.instance.getSavePath();
+                final String? path = await FileSelectorPlatform.instance
+                    .getSavePath(acceptedTypeGroups: [
+                  XTypeGroup(
+                      label: "下載的檔案類型", extensions: [Path.extension(FileName)])
+                ]);
                 if (path != null) {
                   Navigator.pop(context);
                   showDialog(

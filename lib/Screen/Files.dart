@@ -177,6 +177,7 @@ class FilesScreen_ extends State<FilesScreen> {
                                                   builder: (context) =>
                                                       DownloadFile(
                                                         FileID: data['id'],
+                                                        FileName: data['name'],
                                                       ));
                                               break;
                                             default:
