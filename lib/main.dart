@@ -1,15 +1,24 @@
 // ignore_for_file: non_constant_identifier_names, unused_local_variable, file_names, avoid_print, prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmtranslator/API/APIs.dart';
 import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Widget/AccountNone.dart';
+import 'package:universal_io/io.dart';
 
+import 'Screen/AccountWeb.dart';
 import 'Screen/CrowdinOauth.dart';
 import 'Screen/Progress.dart';
 import 'Screen/Mods.dart';
 import 'Utility/utility.dart';
+
+extension BoolParsing on String {
+  bool parseBool() {
+    return toLowerCase() == 'true';
+  }
+}
 
 void main() {
   runApp(const App());
@@ -38,11 +47,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
-    if (!Account.AccountFile.existsSync()) {
-      //如果不存在帳號檔案就建立一個
-      Account.AccountFile
-        ..createSync(recursive: true)
-        ..writeAsStringSync(json.encode({}));
+    if (!kIsWeb) {
+      //如果不是網站才使用檔案儲存
+      if (!Account.AccountFile.existsSync()) {
+        //如果不存在帳號檔案就建立一個
+        Account.AccountFile
+          ..createSync(recursive: true)
+          ..writeAsStringSync(json.encode({}));
+      }
     }
     super.initState();
   }
@@ -71,9 +83,7 @@ class _HomePageState extends State<HomePage> {
             IconButton(
               icon: Icon(Icons.manage_accounts),
               onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (context) => CrowdinAuthScreen());
+                utility.IsWebAccount(context);
               },
               tooltip: "登入帳號",
             ),

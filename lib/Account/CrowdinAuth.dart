@@ -30,7 +30,7 @@ class CrowdinAuthHandler {
       return [Success, data];
     } else {
       print(response.reasonPhrase);
-      return [Error, {}];
+      return [];
     }
   }
 

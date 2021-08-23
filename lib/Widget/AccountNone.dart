@@ -2,10 +2,9 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmtranslator/API/CrowdinAPI.dart';
 import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Account/CrowdinAuth.dart';
-import 'package:rpmtranslator/Screen/CrowdinOauth.dart';
+import 'package:rpmtranslator/Utility/utility.dart';
 import 'package:rpmtranslator/Widget/OkClose.dart';
 
 class AccountNone extends StatelessWidget {
@@ -34,9 +33,7 @@ class AccountNone extends StatelessWidget {
                     TextButton(
                         onPressed: () {
                           Navigator.pop(context);
-                          showDialog(
-                              context: context,
-                              builder: (context) => CrowdinAuthScreen());
+                          utility.IsWebAccount(context);
                         },
                         child: Text("確定"))
                   ],
@@ -64,9 +61,7 @@ class AccountNone extends StatelessWidget {
           TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                showDialog(
-                    context: context,
-                    builder: (context) => CrowdinAuthScreen());
+                utility.IsWebAccount(context);
               },
               child: Text("確定"))
         ],

@@ -1,9 +1,13 @@
 // ignore_for_file: non_constant_identifier_names, unused_local_variable, file_names, avoid_print, prefer_final_fields
 
 import 'dart:convert';
+import 'dart:html';
+
+import 'package:flutter/foundation.dart';
+import 'package:rpmtranslator/main.dart';
 
 import '../path.dart';
-import 'dart:io' as io;
+import 'package:universal_io/io.dart' as io;
 import 'package:path/path.dart';
 
 class Account {
@@ -17,46 +21,83 @@ class Account {
   }
 
   static void add(String Token, String RefreshToken, int UserID) {
-    _account = {
-      "AccessToken": Token,
-      "RefreshToken": RefreshToken,
-      "UserID": UserID,
-      "Expired": false
-    };
+    if (kIsWeb) {
+      window.localStorage.addAll({
+        "AccessToken": Token,
+        "RefreshToken": RefreshToken,
+        "UserID": UserID.toString(),
+        "Expired": false.toString()
+      });
+    } else {
+      _account = {
+        "AccessToken": Token,
+        "RefreshToken": RefreshToken,
+        "UserID": UserID,
+        "Expired": false
+      };
+    }
     save();
   }
 
   static bool has() {
-    return _account.containsKey("AccessToken");
+    if (kIsWeb) {
+      return window.localStorage.containsKey("AccessToken");
+    } else {
+      return _account.containsKey("AccessToken");
+    }
   }
 
   static bool expired() {
-    return _account.containsKey('Expired') ? _account["Expired"] : false;
+    if (kIsWeb) {
+      return window.localStorage.containsKey('Expired')
+          ? window.localStorage["Expired"].toString().parseBool()
+          : false;
+    } else {
+      return _account.containsKey('Expired') ? _account["Expired"] : false;
+    }
   }
 
   static void setExpired(bool s) {
-    _account["Expired"] = s;
+    if (kIsWeb) {
+      window.localStorage["Expired"] = s.toString();
+    } else {
+      _account["Expired"] = s;
+    }
     save();
   }
 
   static String getToken() {
-    return _account["AccessToken"];
+    if (kIsWeb) {
+      return window.localStorage["AccessToken"].toString();
+    } else {
+      return _account["AccessToken"];
+    }
   }
 
   static String getRefreshToken() {
-    return _account["RefreshToken"];
+    if (kIsWeb) {
+      return window.localStorage["RefreshToken"].toString();
+    } else {
+      return _account["RefreshToken"];
+    }
   }
 
   static int getUserID() {
-    return _account["UserID"];
+    if (kIsWeb) {
+      return int.parse(window.localStorage["UserID"].toString());
+    } else {
+      return _account["UserID"];
+    }
   }
 
   static void logout() {
+    if (kIsWeb) return;
     _account = {};
     save();
   }
 
   static void save() {
+    if (kIsWeb) return;
     AccountFile.writeAsStringSync(json.encode(_account));
   }
 

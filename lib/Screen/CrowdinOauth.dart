@@ -4,7 +4,9 @@ The code here is referenced from https://codelabs.developers.google.com/codelabs
  */
 
 import 'dart:async';
-import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:rpmtranslator/Utility/utility.dart';
+import 'package:universal_io/io.dart';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -72,9 +74,7 @@ class _CrowdinOauthState extends State<CrowdinAuthScreen> {
                     onPressed: () {
                       Navigator.pop(context);
                       Navigator.pop(context);
-                      showDialog(
-                          context: context,
-                          builder: (context) => CrowdinAuthScreen());
+                      utility.IsWebAccount(context);
                     },
                   )
                 ],
@@ -184,7 +184,6 @@ class _CrowdinOauthState extends State<CrowdinAuthScreen> {
     return params;
   }
 }
-
 
 class _JsonAcceptingHttpClient extends http.BaseClient {
   final _httpClient = http.Client();
