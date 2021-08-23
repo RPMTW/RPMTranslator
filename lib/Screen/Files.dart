@@ -4,6 +4,7 @@ import 'package:rpmtranslator/API/CrowdinAPI.dart';
 import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Widget/AccountNone.dart';
 
+import 'DownloadFile.dart';
 import 'Translate.dart';
 import 'UploadTranslation.dart';
 
@@ -169,6 +170,14 @@ class FilesScreen_ extends State<FilesScreen> {
                                                           FileID: data['id'],
                                                           FileName:
                                                               data['name']));
+                                              break;
+                                            case 3:
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      DownloadFile(
+                                                        FileID: data['id'],
+                                                      ));
                                               break;
                                             default:
                                               break;

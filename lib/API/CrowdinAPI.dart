@@ -191,4 +191,16 @@ class CrowdinAPI {
     Map data = json.decode(response.body);
     return response.statusCode == 201 ? data['data']['id'] : null;
   }
+
+  static Future<bool> downloadFile(String Token, int FileID, File file) async {
+    String url =
+        "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/files/$FileID/download";
+
+    Map data = await baseGet(Token, url);
+    String downloadUrl = data['url'];
+    await http.get(Uri.parse(downloadUrl)).then((response) {
+      file.writeAsBytes(response.bodyBytes);
+    });
+    return true;
+  }
 }

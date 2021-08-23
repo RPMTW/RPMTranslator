@@ -5,74 +5,58 @@ import 'dart:io';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as path;
 import 'package:rpmtranslator/API/CrowdinAPI.dart';
 import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Widget/OkClose.dart';
 
-class UploadTranslation extends StatefulWidget {
+class DownloadFile extends StatefulWidget {
   final int FileID;
-  final String FileName;
-  const UploadTranslation({
+  const DownloadFile({
     required this.FileID,
-    required this.FileName,
     Key? key,
   }) : super(key: key);
 
   @override
-  State<UploadTranslation> createState() =>
-      _UploadTranslationState(FileID: FileID, FileName: FileName);
+  State<DownloadFile> createState() => _DownloadFileState(FileID: FileID);
 }
 
-class _UploadTranslationState extends State<UploadTranslation> {
+class _DownloadFileState extends State<DownloadFile> {
   final int FileID;
-  final String FileName;
-  _UploadTranslationState({
+  _DownloadFileState({
     required this.FileID,
-    required this.FileName,
   });
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-        title: Text("上傳翻譯"),
-        content: Text("請選擇要上傳的檔案"),
+        title: Text("下載檔案"),
+        content: Text("請選擇檔案要儲存的位置"),
         actions: [
           TextButton(
               onPressed: () async {
-                final XFile? file = await FileSelectorPlatform.instance
-                    .openFile(acceptedTypeGroups: [
-                  XTypeGroup(
-                      label: "翻譯檔案", extensions: [path.extension(FileName)])
-                ]);
-                if (file != null) {
+                final String? path =
+                    await FileSelectorPlatform.instance.getSavePath();
+                if (path != null) {
                   Navigator.pop(context);
                   showDialog(
                       barrierDismissible: false,
                       context: context,
                       builder: (context) {
                         return FutureBuilder(
-                            future: CrowdinAPI.updateTranslation(
-                                Account.getToken(),
-                                File(file.path),
-                                FileID,
-                                FileName),
+                            future: CrowdinAPI.downloadFile(
+                              Account.getToken(),
+                              FileID,
+                              File(path),
+                            ),
                             builder: (context, AsyncSnapshot snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data == true) {
-                                  return AlertDialog(
-                                    title: Text("上傳成功"),
-                                    actions: [OkClose()],
-                                  );
-                                } else {
-                                  return AlertDialog(
-                                    title: Text("上傳失敗"),
-                                    actions: [OkClose()],
-                                  );
-                                }
+                              if (snapshot.hasData && snapshot.data) {
+                                return AlertDialog(
+                                  title: Text("下載檔案完成"),
+                                  actions: [OkClose()],
+                                );
                               } else {
                                 return AlertDialog(
-                                  title: Text("上傳檔案至 Crowdin 伺服器中..."),
+                                  title: Text("正在從 Crowdin 伺服器下載檔案中..."),
                                   content: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     mainAxisSize: MainAxisSize.min,
