@@ -28,6 +28,7 @@ dependencies:
   file_selector_macos:
   file_selector_windows:
   file_selector:
+  highlight_text: ^1.1.0
 
 dev_dependencies:
   flutter_test:

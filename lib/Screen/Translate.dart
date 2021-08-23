@@ -3,12 +3,14 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:highlight_text/highlight_text.dart';
 import 'package:rpmtranslator/API/CrowdinAPI.dart';
 import 'package:rpmtranslator/API/TranslationAPI.dart';
 import 'package:rpmtranslator/API/RPMTWData.dart';
 import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Utility/utility.dart';
 import 'package:rpmtranslator/Widget/OkClose.dart';
+import 'package:rpmtranslator/Widget/TextHighlight.dart';
 import 'package:split_view/split_view.dart';
 import 'package:translator/translator.dart';
 
@@ -401,10 +403,16 @@ class TranslateScreen_ extends State<TranslateScreen> {
                             AutoSizeText("原文",
                                 style: TextStyle(
                                     color: Colors.blue, fontSize: 20)),
-                            AutoSizeText(
-                              SelectStringInfo['text']
+                            RPMTextHighlight(
+                              text: SelectStringInfo['text']
                                   .toString()
                                   .replaceAll("\\n", "\n"),
+                              words: RPMTWData.HighlightedWords,
+                              textStyle: TextStyle(
+                                fontSize: 20.0,
+                                color: Colors.white,
+                              ),
+                              textAlign: TextAlign.justify,
                             ),
                             AutoSizeText("語系鍵",
                                 style: TextStyle(

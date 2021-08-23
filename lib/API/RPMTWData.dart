@@ -1,8 +1,13 @@
 // ignore_for_file: non_constant_identifier_names, unused_local_variable, file_names, avoid_print, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:collection';
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:highlight_text/highlight_text.dart';
 import 'package:http/http.dart';
 import 'package:rpmtranslator/API/APIs.dart';
+import 'package:rpmtranslator/Widget/HighlightedWord.dart';
 
 class RPMTWData {
   static List<String> VersionItems = ["1.17", "1.16", "1.12"];
@@ -24,6 +29,25 @@ class RPMTWData {
     "An identical translation of this string has been already saved. Vote for the existing translation instead of adding a new one.":
         "存在重複的翻譯"
   };
+
+  static LinkedHashMap<String, RPMHighlightedWord> HighlightedWords = {
+    "%s": RPMHighlightedWord(
+        onTap: () {},
+        tooltip: "格式化字串請勿翻譯",
+        textStyle: TextStyle(
+          color: Color.fromRGBO(175, 253, 137, 1.0),
+          backgroundColor: Color.fromRGBO(143, 160, 122, 1.0),
+        ),
+        decoration: BoxDecoration()),
+    "%d": RPMHighlightedWord(
+        onTap: () {},
+        tooltip: "格式化字串請勿翻譯",
+        textStyle: TextStyle(
+          color: Color.fromRGBO(175, 253, 137, 1.0),
+          backgroundColor: Color.fromRGBO(143, 160, 122, 1.0),
+        ),
+        decoration: BoxDecoration()),
+  } as LinkedHashMap<String, RPMHighlightedWord>;
 
   static Future<Map> getProgress() async {
     Response response = await get(Uri.parse(RPMTWProgressAPI));
