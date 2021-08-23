@@ -79,74 +79,66 @@ class _HomePageState extends State<HomePage> {
             ),
           ]),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Transform.scale(
-              scale: 2,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ProgressScreen()));
-                    },
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.donut_large,
-                          color: Colors.blue,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          "查看翻譯進度",
-                          style: TextStyle(fontSize: 25),
-                        )
-                      ],
+        child: Transform.scale(
+          scale: 2,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProgressScreen()));
+                },
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.donut_large,
+                      color: Colors.blue,
                     ),
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 90,
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      if (Account.has() && !Account.expired()) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ModsScreen()));
-                      } else {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AccountNone();
-                            });
-                      }
-                    },
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.translate,
-                          color: Colors.blue,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text("翻譯模組", style: TextStyle(fontSize: 25))
-                      ],
+                    SizedBox(
+                      width: 5,
                     ),
-                  ),
-                ],
+                    Text(
+                      "查看翻譯進度",
+                      style: TextStyle(fontSize: 25),
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 90,
+              ),
+              TextButton(
+                onPressed: () {
+                  if (Account.has() && !Account.expired()) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ModsScreen()));
+                  } else {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AccountNone();
+                        });
+                  }
+                },
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.translate,
+                      color: Colors.blue,
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text("翻譯模組", style: TextStyle(fontSize: 25))
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
