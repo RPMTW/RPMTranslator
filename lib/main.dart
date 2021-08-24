@@ -6,10 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:rpmtranslator/API/APIs.dart';
 import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Widget/AccountNone.dart';
-import 'package:universal_io/io.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import 'Screen/AccountWeb.dart';
-import 'Screen/CrowdinOauth.dart';
 import 'Screen/Progress.dart';
 import 'Screen/Mods.dart';
 import 'Utility/utility.dart';
@@ -87,6 +85,19 @@ class _HomePageState extends State<HomePage> {
               },
               tooltip: "登入帳號",
             ),
+            Builder(builder: (context) {
+              if (kIsWeb) {
+                return IconButton(
+                  icon: Icon(Icons.desktop_windows),
+                  onPressed: () {
+                    utility.OpenUrl("https://github.com/RPMTW/RPMTranslator/releases");
+                  },
+                  tooltip: "下載桌面版",
+                );
+              } else {
+                return Container();
+              }
+            })
           ]),
       body: Center(
         child: Transform.scale(
