@@ -13,6 +13,8 @@ class FilesScreen_ extends State<FilesScreen> {
   final ScrollController FilesScrollController = ScrollController();
   final PageController FilesPageController = PageController(initialPage: 0);
   int FilesListLength = 0;
+  int Page = 0;
+  late StateSetter setChangePageState;
 
   final int DirID;
 
@@ -109,10 +111,11 @@ class FilesScreen_ extends State<FilesScreen> {
               child: PageView.builder(
                   controller: FilesPageController,
                   scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, int Page) {
+                  itemBuilder: (context, int Page_) {
+                    Page = Page_;
                     return FutureBuilder(
                         future: CrowdinAPI.getFilesByDir(Account.getToken(),
-                            DirID, SearchController.text, Page),
+                            DirID, SearchController.text, Page_),
                         builder: (context, AsyncSnapshot snapshot) {
                           if (snapshot.hasData && snapshot.data != null) {
                             return ListView.builder(
@@ -197,33 +200,45 @@ class FilesScreen_ extends State<FilesScreen> {
                         });
                   }),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                    tooltip: "上一頁",
-                    onPressed: () {
-                      FilesPageController.animateToPage(
-                          FilesPageController.page!.toInt() - 1,
-                          curve: Curves.easeOut,
-                          duration: const Duration(milliseconds: 300));
-                    },
-                    icon: Icon(Icons.navigate_before)),
-                SizedBox(
-                  width: 20,
-                ),
-                IconButton(
-                    tooltip: "下一頁",
-                    onPressed: () {
-                      if (FilesListLength < 20) return;
-                      FilesPageController.animateToPage(
-                          FilesPageController.page!.toInt() + 1,
-                          curve: Curves.easeOut,
-                          duration: const Duration(milliseconds: 300));
-                    },
-                    icon: Icon(Icons.navigate_next))
-              ],
-            )
+            StatefulBuilder(builder: (context, setChangePageState_) {
+              setChangePageState = setChangePageState_;
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                      tooltip: "上一頁",
+                      onPressed: () {
+                        FilesPageController.animateToPage(
+                            FilesPageController.page!.toInt() - 1,
+                            curve: Curves.easeOut,
+                            duration: const Duration(milliseconds: 300));
+                        setChangePageState_(() {});
+                      },
+                      icon: Icon(Icons.navigate_before)),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Text(
+                    (Page + 1).toString(),
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  IconButton(
+                      tooltip: "下一頁",
+                      onPressed: () {
+                        if (FilesListLength < 20) return;
+                        FilesPageController.animateToPage(
+                            FilesPageController.page!.toInt() + 1,
+                            curve: Curves.easeOut,
+                            duration: const Duration(milliseconds: 300));
+                        setChangePageState_(() {});
+                      },
+                      icon: Icon(Icons.navigate_next))
+                ],
+              );
+            })
           ],
         ),
       ),

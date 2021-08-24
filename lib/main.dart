@@ -90,7 +90,8 @@ class _HomePageState extends State<HomePage> {
                 return IconButton(
                   icon: Icon(Icons.desktop_windows),
                   onPressed: () {
-                    utility.OpenUrl("https://github.com/RPMTW/RPMTranslator/releases");
+                    utility.OpenUrl(
+                        "https://github.com/RPMTW/RPMTranslator/releases");
                   },
                   tooltip: "下載桌面版",
                 );

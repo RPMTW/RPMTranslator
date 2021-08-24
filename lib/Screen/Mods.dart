@@ -1,10 +1,5 @@
 // ignore_for_file: non_constant_identifier_names, unused_local_variable, file_names, avoid_print, prefer_const_constructors, unnecessary_new, camel_case_types, annotate_overrides, prefer_const_literals_to_create_immutables, prefer_equal_for_default_values, unused_element, avoid_unnecessary_containers, use_key_in_widget_constructors, sized_box_for_whitespace
-import 'dart:convert';
-
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:rpmtranslator/API/APIs.dart';
 import 'package:rpmtranslator/API/CrowdinAPI.dart';
 import 'package:rpmtranslator/API/RPMTWData.dart';
 import 'package:rpmtranslator/Account/Account.dart';
@@ -22,6 +17,8 @@ class ModsScreen_ extends State<ModsScreen> {
   final List<String> VersionItems = RPMTWData.VersionItems;
   String VersionItem = "1.17";
   int ModListLength = 0;
+  int Page = 0;
+  late StateSetter setChangePageState;
 
   @override
   void initState() {
@@ -158,13 +155,14 @@ class ModsScreen_ extends State<ModsScreen> {
                         return PageView.builder(
                             controller: ModPageController,
                             scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, int Page) {
+                            itemBuilder: (context, int Page_) {
+                              Page = Page_;
                               return FutureBuilder(
                                   future: CrowdinAPI.getModsByVersion(
                                       Account.getToken(),
                                       VersionItem,
                                       SearchController.text,
-                                      Page),
+                                      Page_),
                                   builder: (context, AsyncSnapshot snapshot) {
                                     if (snapshot.hasData &&
                                         snapshot.data is List) {
@@ -355,33 +353,45 @@ class ModsScreen_ extends State<ModsScreen> {
                         return Center(child: CircularProgressIndicator());
                       }
                     })),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                    tooltip: "上一頁",
-                    onPressed: () {
-                      ModPageController.animateToPage(
-                          ModPageController.page!.toInt() - 1,
-                          curve: Curves.easeOut,
-                          duration: const Duration(milliseconds: 300));
-                    },
-                    icon: Icon(Icons.navigate_before)),
-                SizedBox(
-                  width: 20,
-                ),
-                IconButton(
-                    tooltip: "下一頁",
-                    onPressed: () {
-                      if (ModListLength < 20) return;
-                      ModPageController.animateToPage(
-                          ModPageController.page!.toInt() + 1,
-                          curve: Curves.easeOut,
-                          duration: const Duration(milliseconds: 300));
-                    },
-                    icon: Icon(Icons.navigate_next))
-              ],
-            ),
+            StatefulBuilder(builder: (context, setChangePageState_) {
+              setChangePageState = setChangePageState_;
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                      tooltip: "上一頁",
+                      onPressed: () {
+                        ModPageController.animateToPage(
+                            ModPageController.page!.toInt() - 1,
+                            curve: Curves.easeOut,
+                            duration: const Duration(milliseconds: 300));
+                        setChangePageState_(() {});
+                      },
+                      icon: Icon(Icons.navigate_before)),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Text(
+                    (Page + 1).toString(),
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  IconButton(
+                      tooltip: "下一頁",
+                      onPressed: () {
+                        if (ModListLength < 20) return;
+                        ModPageController.animateToPage(
+                            ModPageController.page!.toInt() + 1,
+                            curve: Curves.easeOut,
+                            duration: const Duration(milliseconds: 300));
+                        setChangePageState_(() {});
+                      },
+                      icon: Icon(Icons.navigate_next))
+                ],
+              );
+            }),
           ],
         ),
       ),
