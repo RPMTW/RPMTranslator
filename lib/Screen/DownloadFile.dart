@@ -31,60 +31,54 @@ class _DownloadFileState extends State<DownloadFile> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-        title: Text("下載檔案"),
-        content: Text("請選擇檔案要儲存的位置"),
-        actions: [
-          TextButton(
-              onPressed: () async {
-                final String? path = await FileSelectorPlatform.instance
-                    .getSavePath(acceptedTypeGroups: [
-                  XTypeGroup(
-                      label: "下載的檔案類型", extensions: [Path.extension(FileName)])
-                ]);
-                if (path != null) {
-                  Navigator.pop(context);
-                  showDialog(
-                      barrierDismissible: false,
-                      context: context,
-                      builder: (context) {
-                        return FutureBuilder(
-                            future: CrowdinAPI.downloadFile(
-                              Account.getToken(),
-                              FileID,
-                              File(path),
-                            ),
-                            builder: (context, AsyncSnapshot snapshot) {
-                              if (snapshot.hasData && snapshot.data) {
-                                return AlertDialog(
-                                  title: Text("下載檔案完成"),
-                                  actions: [OkClose()],
-                                );
-                              } else {
-                                return AlertDialog(
-                                  title: Text("正在從 Crowdin 伺服器下載檔案中..."),
-                                  content: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      CircularProgressIndicator(),
-                                      SizedBox(
-                                        height: 20,
-                                      )
-                                    ],
+    return AlertDialog(title: Text("下載檔案"), actions: [
+      TextButton(
+          onPressed: () async {
+            final String? path = await FileSelectorPlatform.instance
+                .getSavePath(acceptedTypeGroups: [
+              XTypeGroup(
+                  label: "下載的檔案類型", extensions: [Path.extension(FileName)])
+            ]);
+            if (path != null) {
+              Navigator.pop(context);
+              showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (context) {
+                    return FutureBuilder(
+                        future: CrowdinAPI.downloadFile(
+                            Account.getToken(), FileID, path, FileName),
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData && snapshot.data) {
+                            return AlertDialog(
+                              title: Text("下載檔案完成"),
+                              actions: [OkClose()],
+                            );
+                          } else {
+                            return AlertDialog(
+                              title: Text("正在從 Crowdin 伺服器下載檔案中..."),
+                              content: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    height: 20,
                                   ),
-                                );
-                              }
-                            });
-                      });
-                } else {
-                  return;
-                }
-              },
-              child: Text("選擇檔案"))
-        ]);
+                                  CircularProgressIndicator(),
+                                  SizedBox(
+                                    height: 20,
+                                  )
+                                ],
+                              ),
+                            );
+                          }
+                        });
+                  });
+            } else {
+              return;
+            }
+          },
+          child: Text("下載"))
+    ]);
   }
 }

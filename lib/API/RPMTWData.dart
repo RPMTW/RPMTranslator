@@ -65,7 +65,9 @@ class RPMTWData {
 
   static Future<Map> getCurseForgeAddonInfo(int CurseID) async {
     if (CurseID == 0) return {};
-    Response response = await get(Uri.parse("$CurseForgeAPI/addon/$CurseID"));
+    Response response = await get(
+        Uri.parse("$CurseForgeAPI?url=addon/$CurseID"),
+        headers: {'Access-Control-Allow-Headers': '*'});
     Map data = json.decode(response.body);
     return data;
   }

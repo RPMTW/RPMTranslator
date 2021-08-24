@@ -1,6 +1,8 @@
 // ignore_for_file: non_constant_identifier_names, unused_local_variable, file_names, avoid_print, prefer_const_constructors, unnecessary_new, camel_case_types, annotate_overrides, prefer_const_literals_to_create_immutables, prefer_equal_for_default_values, unused_element, avoid_unnecessary_containers, use_key_in_widget_constructors, sized_box_for_whitespace
 
 import 'dart:convert';
+import 'dart:typed_data';
+import 'package:file_selector/file_selector.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:http/http.dart';
@@ -9,11 +11,14 @@ import 'package:rpmtranslator/API/APIs.dart';
 import 'package:rpmtranslator/API/RPMTWData.dart';
 
 class CrowdinAPI {
-  static Future<dynamic> baseGet(String Token, String url) async {
+  static Future<dynamic> baseGet(String Token, String url, [headers_]) async {
     Map<String, String> headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer $Token'
+      'Authorization': 'Bearer $Token',
     };
+    if (headers_ != null) {
+      headers.addAll(headers_);
+    }
     headers.addAll(RPMTWData.UserAgent);
     Response response = await http.get(Uri.parse(url), headers: headers);
     Map data = json.decode(response.body);
@@ -103,8 +108,9 @@ class CrowdinAPI {
   static Future<List?> getTranslationVotes(
       String Token, int TranslationID, int StringID) async {
     String url =
-        "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/votes/?translationId=$TranslationID&stringId=$StringID&languageId=${RPMTWData.TraditionalChineseTaiwan}";
-    dynamic data = await baseGet(Token, url);
+        "$RPMCrowdinBaseAPI?url=/projects/${RPMTWData.CrowdinID}/votes/?translationId=$TranslationID&stringId=$StringID&languageId=${RPMTWData.TraditionalChineseTaiwan}";
+    dynamic data =
+        await baseGet(Token, url, {'Access-Control-Allow-Headers': '*'});
     return data;
   }
 
@@ -133,8 +139,9 @@ class CrowdinAPI {
   static Future<List?> getCommentsByString(
       String Token, int StringID, int Page) async {
     String url =
-        "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/comments/?stringId=$StringID&offset=${Page * 20}&limit=20";
-    dynamic data = await baseGet(Token, url);
+        "$RPMCrowdinBaseAPI?url=/projects/${RPMTWData.CrowdinID}/comments/?stringId=$StringID&offset=${Page * 20}&limit=20";
+    dynamic data =
+        await baseGet(Token, url, {'Access-Control-Allow-Headers': '*'});
     return data;
   }
 
@@ -164,11 +171,12 @@ class CrowdinAPI {
   }
 
   static Future<bool> updateTranslation(
-      String Token, File file, int FileID, String FileName) async {
+      String Token, XFile file, int FileID, String FileName) async {
     String url =
         "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/translations/${RPMTWData.TraditionalChineseTaiwan}";
 
-    int? storageId = await CrowdinAPI.addStorage(Token, file, FileName);
+    int? storageId =
+        await CrowdinAPI.addStorage(Token, await file.readAsBytes(), FileName);
 
     if (storageId == null) return false;
 
@@ -180,10 +188,10 @@ class CrowdinAPI {
   }
 
   static Future<int?> addStorage(
-      String Token, File file, String FileName) async {
+      String Token, Uint8List fileBytes, String FileName) async {
     String url = "$CrowdinBaseAPI/storages";
 
-    Response response = await basePost(Token, url, file.readAsBytesSync(), {
+    Response response = await basePost(Token, url, fileBytes, {
       "Crowdin-API-FileName": FileName,
       "Content-Type": "application/octet-stream"
     });
@@ -191,14 +199,16 @@ class CrowdinAPI {
     return response.statusCode == 201 ? data['data']['id'] : null;
   }
 
-  static Future<bool> downloadFile(String Token, int FileID, File file) async {
+  static Future<bool> downloadFile(
+      String Token, int FileID, String path, String FileName) async {
     String url =
         "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/files/$FileID/download";
 
     Map data = await baseGet(Token, url);
     String downloadUrl = data['url'];
-    await http.get(Uri.parse(downloadUrl)).then((response) {
-      file.writeAsBytes(response.bodyBytes);
+    await http.get(Uri.parse(downloadUrl)).then((response) async {
+      final file = XFile.fromData(response.bodyBytes, name: FileName);
+      await file.saveTo(path);
     });
     return true;
   }
