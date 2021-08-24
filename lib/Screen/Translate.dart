@@ -3,7 +3,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:highlight_text/highlight_text.dart';
 import 'package:rpmtranslator/API/CrowdinAPI.dart';
 import 'package:rpmtranslator/API/TranslationAPI.dart';
 import 'package:rpmtranslator/API/RPMTWData.dart';
@@ -18,17 +17,20 @@ class TranslateScreen_ extends State<TranslateScreen> {
   final TextEditingController SearchController = TextEditingController();
   final TextEditingController TranslateTextController = TextEditingController();
   final TextEditingController CommentTextController = TextEditingController();
+  final ScrollController SourceStringListController =
+      ScrollController(keepScrollOffset: true);
   final PageController TranslatePageController = PageController(initialPage: 0);
-  int TranslateListLength = 0;
-
+  late List SourceStringList;
   final int FileID;
   final String FileName;
+  int View3SelectedIndex = -1;
   int SelectIndex = -1;
   int StringPage = 0;
   Map SelectStringInfo = {};
-  int View3SelectedIndex = -1;
   late StateSetter setView3State;
   late StateSetter setView2State;
+  late StateSetter setChangePageState;
+  late StateSetter setSourceStringState;
   TranslateScreen_({required this.FileID, required this.FileName});
 
   @override
@@ -154,16 +156,19 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                 builder: (context,
                                     AsyncSnapshot<List<dynamic>?> snapshot) {
                                   if (snapshot.hasData) {
-                                    TranslateListLength = snapshot.data!.length;
-                                    return StatefulBuilder(
-                                        builder: (context, setModListState) {
+                                    SourceStringList = snapshot.data!;
+                                    return StatefulBuilder(builder:
+                                        (context, setSourceStringState_) {
+                                      setSourceStringState =
+                                          setSourceStringState_;
                                       return Container(
                                         width:
                                             MediaQuery.of(context).size.width,
                                         height:
                                             MediaQuery.of(context).size.height,
                                         child: ListView.builder(
-                                            controller: ScrollController(),
+                                            controller:
+                                                SourceStringListController,
                                             shrinkWrap: true,
                                             itemCount: snapshot.data!.length,
                                             itemBuilder: (context, int index) {
@@ -209,7 +214,7 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                                 onTap: () {
                                                   SelectIndex = index;
                                                   SelectStringInfo = StringInfo;
-                                                  setModListState(() {});
+                                                  setSourceStringState_(() {});
                                                   setView2State(() {});
                                                   View3SelectedIndex = 0;
                                                   setView3State(() {});
@@ -229,7 +234,8 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                 });
                           }),
                     ),
-                    StatefulBuilder(builder: (context, setChangePageState) {
+                    StatefulBuilder(builder: (context, setChangePageState_) {
+                      setChangePageState = setChangePageState_;
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -241,7 +247,7 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                     curve: Curves.easeOut,
                                     duration:
                                         const Duration(milliseconds: 300));
-                                setChangePageState(() {});
+                                setChangePageState_(() {});
                               },
                               icon: Icon(Icons.navigate_before)),
                           SizedBox(
@@ -257,13 +263,13 @@ class TranslateScreen_ extends State<TranslateScreen> {
                           IconButton(
                               tooltip: "下一頁",
                               onPressed: () async {
-                                if (TranslateListLength < 20) return;
+                                if (SourceStringList.length < 20) return;
                                 await TranslatePageController.animateToPage(
                                     TranslatePageController.page!.toInt() + 1,
                                     curve: Curves.easeOut,
                                     duration:
                                         const Duration(milliseconds: 300));
-                                setChangePageState(() {});
+                                setChangePageState_(() {});
                               },
                               icon: Icon(Icons.navigate_next))
                         ],
@@ -515,11 +521,43 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                                             actions: [
                                                               TextButton(
                                                                   onPressed:
-                                                                      () {
+                                                                      () async {
                                                                     Navigator.pop(
                                                                         context);
-                                                                    setView2State(
-                                                                        () {});
+                                                                    TranslateTextController
+                                                                        .text = "";
+                                                                    if (SelectIndex ==
+                                                                        20) {
+                                                                      if (SourceStringList
+                                                                              .length <
+                                                                          20)
+                                                                        return;
+                                                                      await TranslatePageController.animateToPage(
+                                                                          TranslatePageController.page!.toInt() +
+                                                                              1,
+                                                                          curve: Curves
+                                                                              .easeOut,
+                                                                          duration:
+                                                                              const Duration(milliseconds: 300));
+                                                                      setChangePageState(
+                                                                          () {});
+                                                                    } else {
+                                                                      SelectIndex =
+                                                                          SelectIndex +
+                                                                              1;
+                                                                      SelectStringInfo =
+                                                                          SourceStringList[SelectIndex]
+                                                                              [
+                                                                              'data'];
+                                                                      setSourceStringState(
+                                                                          () {});
+                                                                      setView2State(
+                                                                          () {});
+                                                                      View3SelectedIndex =
+                                                                          0;
+                                                                      setView3State(
+                                                                          () {});
+                                                                    }
                                                                   },
                                                                   child: Text(
                                                                       "確定"))
