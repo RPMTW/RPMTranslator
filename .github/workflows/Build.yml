@@ -62,7 +62,7 @@ jobs:
     - name: "Upload Artifact"
       uses: actions/upload-artifact@v1
       with:
-        name: RPMTW-website-${{ github.run_number }}-web
+        name: RPMTranslator-${{ github.run_number }}-web
         path: ${{ github.workspace }}/build/web
       
     - name: "Update File"
