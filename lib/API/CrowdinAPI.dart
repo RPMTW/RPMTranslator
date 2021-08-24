@@ -7,7 +7,6 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:rpmtranslator/API/APIs.dart';
 import 'package:rpmtranslator/API/RPMTWData.dart';
-import 'package:path/path.dart' as path;
 
 class CrowdinAPI {
   static Future<dynamic> baseGet(String Token, String url) async {

@@ -1,7 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, unused_local_variable, file_names, avoid_print, prefer_final_fields
 
 import 'dart:convert';
-import 'dart:html';
+import 'package:universal_html/html.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:rpmtranslator/main.dart';
