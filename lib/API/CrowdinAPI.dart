@@ -105,6 +105,16 @@ class CrowdinAPI {
         : Words['translated'] / Words['total'];
   }
 
+  static Future<double> getProgressByDirectory(String Token, int FileID) async {
+    String url =
+        "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/directories/$FileID/languages/progress";
+    List data = await baseGet(Token, url);
+    Map Words = data[0]['data']['words'];
+    return Words['total'] == 0 && Words['translated'] == 0
+        ? 0
+        : Words['translated'] / Words['total'];
+  }
+
   static Future<List?> getTranslationVotes(
       String Token, int TranslationID, int StringID) async {
     String url =
