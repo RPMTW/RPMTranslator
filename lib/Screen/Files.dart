@@ -207,8 +207,8 @@ class FilesScreen_ extends State<FilesScreen> {
                 children: [
                   IconButton(
                       tooltip: "上一頁",
-                      onPressed: () {
-                        FilesPageController.animateToPage(
+                      onPressed: () async {
+                        await FilesPageController.animateToPage(
                             FilesPageController.page!.toInt() - 1,
                             curve: Curves.easeOut,
                             duration: const Duration(milliseconds: 300));
@@ -227,9 +227,9 @@ class FilesScreen_ extends State<FilesScreen> {
                   ),
                   IconButton(
                       tooltip: "下一頁",
-                      onPressed: () {
+                      onPressed: () async {
                         if (FilesListLength < 20) return;
-                        FilesPageController.animateToPage(
+                        await FilesPageController.animateToPage(
                             FilesPageController.page!.toInt() + 1,
                             curve: Curves.easeOut,
                             duration: const Duration(milliseconds: 300));

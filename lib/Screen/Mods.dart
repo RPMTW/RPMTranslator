@@ -360,8 +360,8 @@ class ModsScreen_ extends State<ModsScreen> {
                 children: [
                   IconButton(
                       tooltip: "上一頁",
-                      onPressed: () {
-                        ModPageController.animateToPage(
+                      onPressed: () async {
+                        await ModPageController.animateToPage(
                             ModPageController.page!.toInt() - 1,
                             curve: Curves.easeOut,
                             duration: const Duration(milliseconds: 300));
@@ -380,9 +380,9 @@ class ModsScreen_ extends State<ModsScreen> {
                   ),
                   IconButton(
                       tooltip: "下一頁",
-                      onPressed: () {
+                      onPressed: () async {
                         if (ModListLength < 20) return;
-                        ModPageController.animateToPage(
+                        await ModPageController.animateToPage(
                             ModPageController.page!.toInt() + 1,
                             curve: Curves.easeOut,
                             duration: const Duration(milliseconds: 300));
