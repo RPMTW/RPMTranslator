@@ -40,6 +40,20 @@ class CrowdinAPI {
     return response;
   }
 
+  static Future<Response> baseDelete(String Token, String url,
+      [headers_]) async {
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $Token',
+    };
+    if (headers_ != null) {
+      headers.addAll(headers_);
+    }
+    headers.addAll(RPMTWData.UserAgent);
+    Response response = await http.delete(Uri.parse(url), headers: headers);
+    return response;
+  }
+
   static Future<dynamic> getModsByVersion(
       String Token, String Version, String filter, int Page) async {
     int DirID = RPMTWData.VersionDirID[Version] ?? 33894;
@@ -109,10 +123,7 @@ class CrowdinAPI {
     String url =
         "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/directories/$FileID/languages/progress";
     List data = await baseGet(Token, url);
-    Map Words = data[0]['data']['words'];
-    return Words['total'] == 0 && Words['translated'] == 0
-        ? 0
-        : Words['translated'] / Words['total'];
+    return data[0]['data']['translationProgress'] / 100;
   }
 
   static Future<List?> getTranslationVotes(
@@ -221,5 +232,13 @@ class CrowdinAPI {
       await file.saveTo(path);
     });
     return true;
+  }
+
+  static Future<bool> deleteTranslation(String Token, int translationId) async {
+    String url =
+        "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/translations/$translationId";
+    Response response = await baseDelete(Token, url);
+    print(response.statusCode == 204);
+    return response.statusCode == 204;
   }
 }

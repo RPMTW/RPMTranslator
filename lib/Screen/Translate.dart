@@ -741,6 +741,69 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                                         Icons.copy_outlined),
                                                     tooltip: "複製譯文",
                                                   ),
+                                                  Builder(builder: (context) {
+                                                    if (IsMe) {
+                                                      return IconButton(
+                                                        onPressed: () {
+                                                          showDialog(
+                                                              barrierDismissible:
+                                                                  false,
+                                                              context: context,
+                                                              builder:
+                                                                  (context) {
+                                                                return FutureBuilder(
+                                                                    future: CrowdinAPI
+                                                                        .deleteTranslation(
+                                                                      Account
+                                                                          .getToken(),
+                                                                      TranslationStringInfo[
+                                                                          'id'],
+                                                                    ),
+                                                                    builder: (context,
+                                                                        AsyncSnapshot
+                                                                            DeleteSnapshot) {
+                                                                      print(DeleteSnapshot
+                                                                          .data);
+                                                                      if (DeleteSnapshot
+                                                                              .hasData &&
+                                                                          DeleteSnapshot.data ==
+                                                                              true) {
+                                                                        setView2State(
+                                                                            () {});
+                                                                        return AlertDialog(
+                                                                          title:
+                                                                              Text("刪除翻譯成功"),
+                                                                          actions: [
+                                                                            OkClose()
+                                                                          ],
+                                                                        );
+                                                                      } else if (DeleteSnapshot
+                                                                              .hasData &&
+                                                                          DeleteSnapshot.data ==
+                                                                              true) {
+                                                                        return AlertDialog(
+                                                                          title:
+                                                                              Text("刪除翻譯失敗"),
+                                                                          actions: [
+                                                                            OkClose()
+                                                                          ],
+                                                                        );
+                                                                      } else {
+                                                                        return Center(
+                                                                            child:
+                                                                                CircularProgressIndicator());
+                                                                      }
+                                                                    });
+                                                              });
+                                                        },
+                                                        icon:
+                                                            Icon(Icons.delete),
+                                                        tooltip: "刪除翻譯",
+                                                      );
+                                                    } else {
+                                                      return Container();
+                                                    }
+                                                  })
                                                 ],
                                               ));
                                         });
