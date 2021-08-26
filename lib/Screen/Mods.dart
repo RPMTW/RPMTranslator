@@ -266,8 +266,8 @@ class ModsScreen_ extends State<ModsScreen> {
                                                                           if (snapshot
                                                                               .hasData) {
                                                                             return Stack(children: [
-                                                                              Transform.rotate(
-                                                                                angle: pi / 2,
+                                                                              RotatedBox(
+                                                                                quarterTurns: 3,
                                                                                 child: LinearProgressIndicator(
                                                                                   color: Colors.blue,
                                                                                   value: snapshot.data,
