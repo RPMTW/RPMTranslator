@@ -51,8 +51,7 @@ class TranslateScreen_ extends State<TranslateScreen> {
             children: [
               Text("$FileName - 翻譯頁面"),
               FutureBuilder(
-                  future:
-                      CrowdinAPI.getProgressByFile(Account.getToken(), FileID),
+                  future: CrowdinAPI.getProgressByFile(FileID),
                   builder: (context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
                       return Column(
@@ -149,10 +148,7 @@ class TranslateScreen_ extends State<TranslateScreen> {
                             StringPage = Page;
                             return FutureBuilder(
                                 future: CrowdinAPI.getSourceStringByFile(
-                                    Account.getToken(),
-                                    FileID,
-                                    SearchController.text,
-                                    Page),
+                                    FileID, SearchController.text, Page),
                                 builder: (context,
                                     AsyncSnapshot<List<dynamic>?> snapshot) {
                                   if (snapshot.hasData) {
@@ -181,7 +177,6 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                                 leading: FutureBuilder(
                                                     future: CrowdinAPI
                                                         .getStringTranslations(
-                                                      Account.getToken(),
                                                       StringInfo['id'],
                                                     ),
                                                     builder: (context,
@@ -476,147 +471,143 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                     showDialog(
                                         barrierDismissible: false,
                                         context: context,
-                                        builder: (context) =>
-                                            Builder(builder: (context) {
-                                              if (TranslateTextController
-                                                  .text.isEmpty) {
-                                                return AlertDialog(
-                                                  title: Text("新增翻譯失敗",
-                                                      textAlign:
-                                                          TextAlign.center),
-                                                  content: Text("譯文不能是空的"),
-                                                  actions: [
-                                                    TextButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: Text("確定"))
-                                                  ],
-                                                );
-                                              } else {
-                                                return FutureBuilder(
-                                                    future: CrowdinAPI
-                                                        .addTranslation(
-                                                            Account.getToken(),
-                                                            SelectStringInfo[
-                                                                'id'],
-                                                            TranslateTextController
-                                                                .text),
-                                                    builder: (context,
-                                                        AsyncSnapshot<Map?>
-                                                            snapshot) {
-                                                      if (snapshot.hasData) {
-                                                        Map? data =
-                                                            snapshot.data;
-                                                        if (data != null &&
-                                                            !data.containsKey(
-                                                                'errors')) {
-                                                          return AlertDialog(
-                                                            title: Text(
-                                                                "成功新增翻譯，感謝您的翻譯貢獻",
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center),
-                                                            actions: [
-                                                              TextButton(
-                                                                  onPressed:
-                                                                      () async {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                    TranslateTextController
-                                                                        .text = "";
-                                                                    if (SelectIndex ==
-                                                                        20) {
-                                                                      if (SourceStringList
-                                                                              .length <
-                                                                          20)
-                                                                        return;
-                                                                      await TranslatePageController.animateToPage(
-                                                                          TranslatePageController.page!.toInt() +
-                                                                              1,
-                                                                          curve: Curves
-                                                                              .easeOut,
-                                                                          duration:
-                                                                              const Duration(milliseconds: 300));
-                                                                      setChangePageState(
-                                                                          () {});
-                                                                    } else {
-                                                                      SelectIndex =
-                                                                          SelectIndex +
-                                                                              1;
-                                                                      SelectStringInfo =
-                                                                          SourceStringList[SelectIndex]
-                                                                              [
-                                                                              'data'];
-                                                                      setSourceStringState(
-                                                                          () {});
-                                                                      setView2State(
-                                                                          () {});
-                                                                      View3SelectedIndex =
-                                                                          0;
-                                                                      setView3State(
-                                                                          () {});
-                                                                    }
-                                                                  },
-                                                                  child: Text(
-                                                                      "確定"))
-                                                            ],
-                                                          );
-                                                        } else if (data !=
-                                                                null &&
-                                                            data.containsKey(
-                                                                'errors')) {
-                                                          Map error =
-                                                              data['errors']
-                                                                          [0]
-                                                                      ['error']
+                                        builder:
+                                            (context) =>
+                                                Builder(builder: (context) {
+                                                  if (TranslateTextController
+                                                      .text.isEmpty) {
+                                                    return AlertDialog(
+                                                      title: Text("新增翻譯失敗",
+                                                          textAlign:
+                                                              TextAlign.center),
+                                                      content: Text("譯文不能是空的"),
+                                                      actions: [
+                                                        TextButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: Text("確定"))
+                                                      ],
+                                                    );
+                                                  } else {
+                                                    return FutureBuilder(
+                                                        future: CrowdinAPI
+                                                            .addTranslation(
+                                                                SelectStringInfo[
+                                                                    'id'],
+                                                                TranslateTextController
+                                                                    .text),
+                                                        builder: (context,
+                                                            AsyncSnapshot<Map?>
+                                                                snapshot) {
+                                                          if (snapshot
+                                                              .hasData) {
+                                                            Map? data =
+                                                                snapshot.data;
+                                                            if (data != null &&
+                                                                !data.containsKey(
+                                                                    'errors')) {
+                                                              return AlertDialog(
+                                                                title: Text(
+                                                                    "成功新增翻譯，感謝您的翻譯貢獻",
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center),
+                                                                actions: [
+                                                                  TextButton(
+                                                                      onPressed:
+                                                                          () async {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                        TranslateTextController.text =
+                                                                            "";
+                                                                        if (SelectIndex ==
+                                                                            20) {
+                                                                          if (SourceStringList.length <
+                                                                              20)
+                                                                            return;
+                                                                          await TranslatePageController.animateToPage(
+                                                                              TranslatePageController.page!.toInt() + 1,
+                                                                              curve: Curves.easeOut,
+                                                                              duration: const Duration(milliseconds: 300));
+                                                                          setChangePageState(
+                                                                              () {});
+                                                                        } else {
+                                                                          SelectIndex =
+                                                                              SelectIndex + 1;
+                                                                          SelectStringInfo =
+                                                                              SourceStringList[SelectIndex]['data'];
+                                                                          setSourceStringState(
+                                                                              () {});
+                                                                          setView2State(
+                                                                              () {});
+                                                                          View3SelectedIndex =
+                                                                              0;
+                                                                          setView3State(
+                                                                              () {});
+                                                                        }
+                                                                      },
+                                                                      child: Text(
+                                                                          "確定"))
+                                                                ],
+                                                              );
+                                                            } else if (data !=
+                                                                    null &&
+                                                                data.containsKey(
+                                                                    'errors')) {
+                                                              Map error = data[
+                                                                          'errors']
+                                                                      [
+                                                                      0]['error']
                                                                   ['errors'][0];
-                                                          String errorMessage =
-                                                              error['message'];
-                                                          String errorCode =
-                                                              error['code'];
-                                                          return AlertDialog(
-                                                            title: Text(
-                                                                "新增翻譯失敗",
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center),
-                                                            content: Column(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .min,
-                                                              children: [
-                                                                Text(
-                                                                    "錯誤代碼: $errorCode"),
-                                                                Text(
-                                                                    "錯誤訊息: ${RPMTWData.TranslateErrorMessage(errorMessage)}")
-                                                              ],
-                                                            ),
-                                                            actions: [
-                                                              OkClose()
-                                                            ],
-                                                          );
-                                                        } else {
-                                                          return AlertDialog(
-                                                            title: Text(
-                                                                "發生未知錯誤",
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center),
-                                                            actions: [
-                                                              OkClose()
-                                                            ],
-                                                          );
-                                                        }
-                                                      } else {
-                                                        return Center(
-                                                            child:
-                                                                CircularProgressIndicator());
-                                                      }
-                                                    });
-                                              }
-                                            }));
+                                                              String
+                                                                  errorMessage =
+                                                                  error[
+                                                                      'message'];
+                                                              String errorCode =
+                                                                  error['code'];
+                                                              return AlertDialog(
+                                                                title: Text(
+                                                                    "新增翻譯失敗",
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center),
+                                                                content: Column(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .min,
+                                                                  children: [
+                                                                    Text(
+                                                                        "錯誤代碼: $errorCode"),
+                                                                    Text(
+                                                                        "錯誤訊息: ${RPMTWData.TranslateErrorMessage(errorMessage)}")
+                                                                  ],
+                                                                ),
+                                                                actions: [
+                                                                  OkClose()
+                                                                ],
+                                                              );
+                                                            } else {
+                                                              return AlertDialog(
+                                                                title: Text(
+                                                                    "發生未知錯誤",
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center),
+                                                                actions: [
+                                                                  OkClose()
+                                                                ],
+                                                              );
+                                                            }
+                                                          } else {
+                                                            return Center(
+                                                                child:
+                                                                    CircularProgressIndicator());
+                                                          }
+                                                        });
+                                                  }
+                                                }));
                                   },
                                   child: Text(
                                     "提交",
@@ -653,7 +644,6 @@ class TranslateScreen_ extends State<TranslateScreen> {
                           return Container(
                             child: FutureBuilder(
                                 future: CrowdinAPI.getStringTranslations(
-                                  Account.getToken(),
                                   SelectStringInfo['id'],
                                 ),
                                 builder:
@@ -754,8 +744,6 @@ class TranslateScreen_ extends State<TranslateScreen> {
                                                                 return FutureBuilder(
                                                                     future: CrowdinAPI
                                                                         .deleteTranslation(
-                                                                      Account
-                                                                          .getToken(),
                                                                       TranslationStringInfo[
                                                                           'id'],
                                                                     ),
@@ -840,7 +828,7 @@ class TranslateScreen_ extends State<TranslateScreen> {
   Widget Votes(Map<dynamic, dynamic> TranslationStringInfo, bool IsMe,
       StateSetter setView2State_) {
     return FutureBuilder(
-        future: CrowdinAPI.getTranslationVotes(Account.getToken(),
+        future: CrowdinAPI.getTranslationVotes(
             TranslationStringInfo['id'], SelectStringInfo['id']),
         builder: (context, AsyncSnapshot TranslationVotesSnapshot) {
           if (TranslationVotesSnapshot.hasData) {
@@ -869,7 +857,6 @@ class TranslateScreen_ extends State<TranslateScreen> {
                         } else {
                           return FutureBuilder(
                               future: CrowdinAPI.addVote(
-                                  Account.getToken(),
                                   TranslationStringInfo['id'],
                                   RPMTWData.MarkUp),
                               builder: (context, AsyncSnapshot<Map?> snapshot) {
@@ -924,7 +911,6 @@ class TranslateScreen_ extends State<TranslateScreen> {
                         } else {
                           return FutureBuilder(
                               future: CrowdinAPI.addVote(
-                                  Account.getToken(),
                                   TranslationStringInfo['id'],
                                   RPMTWData.MarkDown),
                               builder: (context, AsyncSnapshot<Map?> snapshot) {
@@ -1096,8 +1082,7 @@ class CommentView extends StatelessWidget {
     return Builder(builder: (context) {
       if (SelectStringInfo.containsKey('text')) {
         return FutureBuilder(
-            future: CrowdinAPI.getCommentsByString(
-                Account.getToken(), SelectStringInfo['id'], 0),
+            future: CrowdinAPI.getCommentsByString(SelectStringInfo['id'], 0),
             builder: (context, AsyncSnapshot CommentsSnapshot_) {
               if (CommentsSnapshot_.hasData &&
                   CommentsSnapshot != CommentsSnapshot_.data) {
@@ -1228,7 +1213,6 @@ class CommentView extends StatelessWidget {
                                           } else {
                                             return FutureBuilder(
                                                 future: CrowdinAPI.addComment(
-                                                  Account.getToken(),
                                                   SelectStringInfo['id'],
                                                   CommentTextController.text,
                                                   RPMTWData.Comment,

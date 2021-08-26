@@ -15,7 +15,9 @@ class ModsScreen_ extends State<ModsScreen> {
   final ScrollController ModScrollController = ScrollController();
   final PageController ModPageController = PageController(initialPage: 0);
   final List<String> VersionItems = RPMTWData.VersionItems;
+  final List<String> SortItems = RPMTWData.SortItems;
   String VersionItem = "1.17";
+  String SortItem = "模組ID";
   int ModListLength = 0;
   int Page = 0;
   late StateSetter setChangePageState;
@@ -141,6 +143,40 @@ class ModsScreen_ extends State<ModsScreen> {
                 SizedBox(
                   width: 30,
                 ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "搜尋類型",
+                      style: title_,
+                    ),
+                    DropdownButton<String>(
+                      value: SortItem,
+                      alignment: Alignment.center,
+                      style: TextStyle(color: Colors.white),
+                      onChanged: (String? newValue) {
+                        SortItem = newValue.toString();
+                        setState(() {});
+                      },
+                      items: SortItems.map<DropdownMenuItem<String>>(
+                          (String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          alignment: Alignment.center,
+                          child: Text(
+                            value,
+                            textAlign: TextAlign.center,
+                            style: title_,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  width: 30,
+                ),
               ],
             ),
             Container(
@@ -158,11 +194,11 @@ class ModsScreen_ extends State<ModsScreen> {
                             itemBuilder: (context, int Page_) {
                               Page = Page_;
                               return FutureBuilder(
-                                  future: CrowdinAPI.getModsByVersion(
-                                      Account.getToken(),
+                                  future: CrowdinAPI.getMods(
                                       VersionItem,
                                       SearchController.text,
-                                      Page_),
+                                      Page_,
+                                      SortItem),
                                   builder: (context, AsyncSnapshot snapshot) {
                                     if (snapshot.hasData &&
                                         snapshot.data is List) {
@@ -205,10 +241,8 @@ class ModsScreen_ extends State<ModsScreen> {
                                                               height: 50,
                                                               child:
                                                                   FutureBuilder(
-                                                                      future: CrowdinAPI.getProgressByDirectory(
-                                                                          Account
-                                                                              .getToken(),
-                                                                          data[
+                                                                      future: CrowdinAPI
+                                                                          .getProgressByDirectory(data[
                                                                               'id']),
                                                                       builder: (context,
                                                                           AsyncSnapshot

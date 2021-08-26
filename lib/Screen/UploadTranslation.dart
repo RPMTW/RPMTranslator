@@ -53,10 +53,7 @@ class _UploadTranslationState extends State<UploadTranslation> {
                       builder: (context) {
                         return FutureBuilder(
                             future: CrowdinAPI.updateTranslation(
-                                Account.getToken(),
-                                file,
-                                FileID,
-                                FileName),
+                                file, FileID, FileName),
                             builder: (context, AsyncSnapshot snapshot) {
                               if (snapshot.hasData) {
                                 if (snapshot.data == true) {

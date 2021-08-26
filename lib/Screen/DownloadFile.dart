@@ -46,8 +46,7 @@ class _DownloadFileState extends State<DownloadFile> {
                   context: context,
                   builder: (context) {
                     return FutureBuilder(
-                        future: CrowdinAPI.downloadFile(
-                            Account.getToken(), FileID, path, FileName),
+                        future: CrowdinAPI.downloadFile(FileID, path, FileName),
                         builder: (context, AsyncSnapshot snapshot) {
                           if (snapshot.hasData && snapshot.data) {
                             return AlertDialog(

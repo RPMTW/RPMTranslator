@@ -114,7 +114,7 @@ class FilesScreen_ extends State<FilesScreen> {
                   itemBuilder: (context, int Page_) {
                     Page = Page_;
                     return FutureBuilder(
-                        future: CrowdinAPI.getFilesByDir(Account.getToken(),
+                        future: CrowdinAPI.getFilesByDir(
                             DirID, SearchController.text, Page_),
                         builder: (context, AsyncSnapshot snapshot) {
                           if (snapshot.hasData && snapshot.data != null) {

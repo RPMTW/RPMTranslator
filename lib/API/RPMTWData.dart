@@ -10,7 +10,11 @@ import 'package:rpmtranslator/API/APIs.dart';
 import 'package:rpmtranslator/Widget/HighlightedWord.dart';
 
 class RPMTWData {
-  static List<String> VersionItems = ["1.17", "1.16", "1.12"];
+  static final List<String> VersionItems = ["1.17", "1.16", "1.12"];
+  static final List<String> SortItems = [
+    "模組 ID",
+    "CurseForge ID",
+  ];
   static Map<String, int> VersionDirID = {
     "1.12": 37104,
     "1.16": 14698,
@@ -64,6 +68,13 @@ class RPMTWData {
     String GitVersion = VersionID == 1.16 ? "Original" : "Original-$VersionID";
     Response response = await get(Uri.parse(
         "https://raw.githubusercontent.com/RPMTW/ResourcePack-Mod-zh_tw/$GitVersion/$VersionID/CurseForgeIndex.json"));
+    Map data = json.decode(response.body);
+    return data;
+  }
+
+  static Future<Map> getCrowdinIndex(double VersionID) async {
+    Response response = await get(Uri.parse(
+        "https://raw.githubusercontent.com/RPMTW/RPMTW-website-data/main/data/CrowdinIndex-$VersionID.json"));
     Map data = json.decode(response.body);
     return data;
   }
