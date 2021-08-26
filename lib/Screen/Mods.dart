@@ -1,4 +1,6 @@
 // ignore_for_file: non_constant_identifier_names, unused_local_variable, file_names, avoid_print, prefer_const_constructors, unnecessary_new, camel_case_types, annotate_overrides, prefer_const_literals_to_create_immutables, prefer_equal_for_default_values, unused_element, avoid_unnecessary_containers, use_key_in_widget_constructors, sized_box_for_whitespace
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:rpmtranslator/API/CrowdinAPI.dart';
 import 'package:rpmtranslator/API/RPMTWData.dart';
@@ -86,10 +88,9 @@ class ModsScreen_ extends State<ModsScreen> {
                   textAlign: TextAlign.center,
                   controller: SearchController,
                   decoration: InputDecoration(
-                    hintText: "請輸入模組ID",
+                    hintText: "請輸入 $SortItem",
                     enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.lightBlue, width: 5.0),
+                      borderSide: BorderSide(color: Colors.white12, width: 3.0),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide:
@@ -242,129 +243,138 @@ class ModsScreen_ extends State<ModsScreen> {
                                                             CurseIndex
                                                                 .containsKey(
                                                                     DirName);
-                                                    return ListTile(
-                                                        leading: Row(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: [
-                                                            Container(
-                                                              width: 50,
-                                                              height: 50,
-                                                              child:
-                                                                  FutureBuilder(
-                                                                      future: CrowdinAPI
-                                                                          .getProgressByDirectory(data[
-                                                                              'id']),
-                                                                      builder: (context,
-                                                                          AsyncSnapshot
-                                                                              snapshot) {
-                                                                        if (snapshot
-                                                                            .hasData) {
-                                                                          return Column(
-                                                                            children: [
-                                                                              SizedBox(
+                                                    return Column(
+                                                      children: [
+                                                        SizedBox(height: 5),
+                                                        ListTile(
+                                                            leading: Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              children: [
+                                                                Container(
+                                                                  width: 50,
+                                                                  height: 50,
+                                                                  child:
+                                                                      ClipRRect(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            100.0),
+                                                                    child: FutureBuilder(
+                                                                        future: CrowdinAPI.getProgressByDirectory(data['id']),
+                                                                        builder: (context, AsyncSnapshot snapshot) {
+                                                                          if (snapshot
+                                                                              .hasData) {
+                                                                            return Stack(children: [
+                                                                              Transform.rotate(
+                                                                                angle: pi / 2,
                                                                                 child: LinearProgressIndicator(
                                                                                   color: Colors.blue,
                                                                                   value: snapshot.data,
-                                                                                  minHeight: 20,
+                                                                                  minHeight: 50,
                                                                                 ),
                                                                               ),
-                                                                              Text((snapshot.data * 100).toStringAsFixed(2))
-                                                                            ],
-                                                                          );
+                                                                              Positioned(
+                                                                                child: Text((snapshot.data * 100).toStringAsFixed(2), textAlign: TextAlign.center),
+                                                                                top: 15,
+                                                                                left: 0,
+                                                                                bottom: 15,
+                                                                                right: 0,
+                                                                              )
+                                                                            ]);
+                                                                          } else {
+                                                                            return LinearProgressIndicator();
+                                                                          }
+                                                                        }),
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 50,
+                                                                  height: 50,
+                                                                  child:
+                                                                      ClipRRect(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                    child: Builder(
+                                                                        builder:
+                                                                            (context) {
+                                                                      if (IsCurseMod) {
+                                                                        Map?
+                                                                            CurseAddonInfo =
+                                                                            CurseAddonSnapshot.data;
+                                                                        if (CurseAddonInfo!.containsKey('attachments') &&
+                                                                            CurseAddonInfo['attachments'].isNotEmpty) {
+                                                                          return Image.network(
+                                                                              CurseAddonInfo['attachments'][0]['thumbnailUrl'],
+                                                                              fit: BoxFit.fill);
                                                                         } else {
-                                                                          return LinearProgressIndicator();
+                                                                          return Icon(
+                                                                              Icons.image,
+                                                                              size: 50);
                                                                         }
-                                                                      }),
+                                                                      } else {
+                                                                        return Icon(
+                                                                            Icons
+                                                                                .image,
+                                                                            size:
+                                                                                50);
+                                                                      }
+                                                                    }),
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
-                                                            SizedBox(
+                                                            title:
+                                                                Text(DirName),
+                                                            onTap: () {
+                                                              showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder: (context) =>
+                                                                      FilesScreen(
+                                                                          DirID:
+                                                                              data['id']));
+                                                            },
+                                                            trailing: SizedBox(
                                                               width: 50,
                                                               height: 50,
-                                                              child: ClipRRect(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8.0),
-                                                                child: Builder(
-                                                                    builder:
-                                                                        (context) {
-                                                                  if (IsCurseMod) {
-                                                                    Map?
-                                                                        CurseAddonInfo =
-                                                                        CurseAddonSnapshot
-                                                                            .data;
-                                                                    if (CurseAddonInfo!.containsKey(
-                                                                            'attachments') &&
-                                                                        CurseAddonInfo['attachments']
-                                                                            .isNotEmpty) {
-                                                                      return Image.network(
-                                                                          CurseAddonInfo['attachments'][0]
-                                                                              [
-                                                                              'thumbnailUrl'],
-                                                                          fit: BoxFit
-                                                                              .fill);
+                                                              child: Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  Builder(builder:
+                                                                      (context) {
+                                                                    if (IsCurseMod) {
+                                                                      Map?
+                                                                          CurseAddonInfo =
+                                                                          CurseAddonSnapshot
+                                                                              .data;
+                                                                      return IconButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          utility.OpenUrl(
+                                                                              CurseAddonInfo!['websiteUrl']);
+                                                                        },
+                                                                        icon: Icon(
+                                                                            Icons.open_in_browser),
+                                                                        tooltip:
+                                                                            "在 CurseForge 檢視此模組",
+                                                                      );
                                                                     } else {
-                                                                      return Icon(
-                                                                          Icons
-                                                                              .image,
-                                                                          size:
-                                                                              50);
+                                                                      return Container();
                                                                     }
-                                                                  } else {
-                                                                    return Icon(
-                                                                        Icons
-                                                                            .image,
-                                                                        size:
-                                                                            50);
-                                                                  }
-                                                                }),
+                                                                  }),
+                                                                ],
                                                               ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        title: Text(DirName),
-                                                        onTap: () {
-                                                          showDialog(
-                                                              context: context,
-                                                              builder: (context) =>
-                                                                  FilesScreen(
-                                                                      DirID: data[
-                                                                          'id']));
-                                                        },
-                                                        trailing: SizedBox(
-                                                          width: 50,
-                                                          height: 50,
-                                                          child: Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: [
-                                                              Builder(builder:
-                                                                  (context) {
-                                                                if (IsCurseMod) {
-                                                                  Map?
-                                                                      CurseAddonInfo =
-                                                                      CurseAddonSnapshot
-                                                                          .data;
-                                                                  return IconButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      utility.OpenUrl(
-                                                                          CurseAddonInfo![
-                                                                              'websiteUrl']);
-                                                                    },
-                                                                    icon: Icon(Icons
-                                                                        .open_in_browser),
-                                                                    tooltip:
-                                                                        "在 CurseForge 檢視此模組",
-                                                                  );
-                                                                } else {
-                                                                  return Container();
-                                                                }
-                                                              }),
-                                                            ],
-                                                          ),
-                                                        ));
+                                                            )),
+                                                        SizedBox(height: 5),
+                                                      ],
+                                                    );
                                                   } else {
                                                     return Center(
                                                         child:
