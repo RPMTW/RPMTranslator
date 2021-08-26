@@ -91,6 +91,14 @@ class CrowdinAPI {
     return data;
   }
 
+  static Future<List?> getAllSourceString(String filter, int Page) async {
+    filter = filter == "" ? "" : "and (text=\"$filter\")";
+    String url =
+        "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/strings?offset=${Page * 20}&limit=20&croql=(count of translations = 0) $filter";
+    dynamic data = await baseGet(url);
+    return data;
+  }
+
   static Future<List?> getSourceStringByFile(
       int FileID, String filter, int Page) async {
     filter = filter == "" ? "" : "&filter=$filter";

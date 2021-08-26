@@ -21,8 +21,8 @@ class TranslateScreen_ extends State<TranslateScreen> {
       ScrollController(keepScrollOffset: true);
   final PageController TranslatePageController = PageController(initialPage: 0);
   late List SourceStringList;
-  final int FileID;
-  final String FileName;
+  final int? FileID;
+  final String? FileName;
   int View3SelectedIndex = -1;
   int SelectIndex = -1;
   int StringPage = 0;
@@ -49,18 +49,26 @@ class TranslateScreen_ extends State<TranslateScreen> {
           toolbarHeight: 80,
           title: Column(
             children: [
-              Text("$FileName - 翻譯頁面"),
+              Text("${FileName == null ? "" : "$FileName -"}翻譯頁面"),
               FutureBuilder(
-                  future: CrowdinAPI.getProgressByFile(FileID),
+                  future: FileID == null
+                      ? RPMTWData.getProgress()
+                      : CrowdinAPI.getProgressByFile(FileID!),
                   builder: (context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
+                      var data = FileID == null
+                          ? double.parse(snapshot.data['progress']
+                                  .split("%")
+                                  .join("")) /
+                              100
+                          : snapshot.data;
                       return Column(
                         children: [
                           LinearProgressIndicator(
                             color: Colors.blue,
-                            value: snapshot.data,
+                            value: data,
                           ),
-                          Text((snapshot.data * 100).toStringAsFixed(2) + "%")
+                          Text((data * 100).toStringAsFixed(2) + "%")
                         ],
                       );
                     } else {
@@ -147,8 +155,11 @@ class TranslateScreen_ extends State<TranslateScreen> {
                           itemBuilder: (context, int Page) {
                             StringPage = Page;
                             return FutureBuilder(
-                                future: CrowdinAPI.getSourceStringByFile(
-                                    FileID, SearchController.text, Page),
+                                future: FileID == null
+                                    ? CrowdinAPI.getAllSourceString(
+                                        SearchController.text, Page)
+                                    : CrowdinAPI.getSourceStringByFile(
+                                        FileID!, SearchController.text, Page),
                                 builder: (context,
                                     AsyncSnapshot<List<dynamic>?> snapshot) {
                                   if (snapshot.hasData) {
@@ -1312,8 +1323,8 @@ class CommentView extends StatelessWidget {
 }
 
 class TranslateScreen extends StatefulWidget {
-  final int FileID;
-  final String FileName;
+  final int? FileID;
+  final String? FileName;
   const TranslateScreen({required this.FileID, required this.FileName});
 
   @override

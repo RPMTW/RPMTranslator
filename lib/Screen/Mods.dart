@@ -9,6 +9,7 @@ import 'package:rpmtranslator/Widget/AccountNone.dart';
 import 'package:rpmtranslator/Widget/OkClose.dart';
 
 import '../main.dart';
+import 'Translate.dart';
 
 class ModsScreen_ extends State<ModsScreen> {
   final TextEditingController SearchController = TextEditingController();
@@ -17,7 +18,7 @@ class ModsScreen_ extends State<ModsScreen> {
   final List<String> VersionItems = RPMTWData.VersionItems;
   final List<String> SortItems = RPMTWData.SortItems;
   String VersionItem = "1.17";
-  String SortItem = "模組ID";
+  String SortItem = RPMTWData.SortItems[0];
   int ModListLength = 0;
   int Page = 0;
   late StateSetter setChangePageState;
@@ -53,6 +54,19 @@ class ModsScreen_ extends State<ModsScreen> {
           children: [
             SizedBox(
               height: 20,
+            ),
+            TextButton(
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) =>
+                        TranslateScreen(FileID: null, FileName: null));
+                String test;
+              },
+              child: Text(
+                "翻譯全部",
+                style: TextStyle(fontSize: 25),
+              ),
             ),
             Row(
               mainAxisSize: MainAxisSize.min,
@@ -194,11 +208,8 @@ class ModsScreen_ extends State<ModsScreen> {
                             itemBuilder: (context, int Page_) {
                               Page = Page_;
                               return FutureBuilder(
-                                  future: CrowdinAPI.getMods(
-                                      VersionItem,
-                                      SearchController.text,
-                                      Page_,
-                                      SortItem),
+                                  future: CrowdinAPI.getMods(VersionItem,
+                                      SearchController.text, Page_, SortItem),
                                   builder: (context, AsyncSnapshot snapshot) {
                                     if (snapshot.hasData &&
                                         snapshot.data is List) {
@@ -321,8 +332,8 @@ class ModsScreen_ extends State<ModsScreen> {
                                                                           'id']));
                                                         },
                                                         trailing: SizedBox(
-                                                          width: 100,
-                                                          height: 100,
+                                                          width: 50,
+                                                          height: 50,
                                                           child: Row(
                                                             mainAxisSize:
                                                                 MainAxisSize
