@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:rpmtranslator/API/APIs.dart';
 import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Widget/AccountNone.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 import 'Screen/Progress.dart';
 import 'Screen/Mods.dart';
 import 'Utility/utility.dart';
@@ -102,8 +100,8 @@ class _HomePageState extends State<HomePage> {
           ]),
       body: Center(
         child: Transform.scale(
-          scale: 2,
-          child: Row(
+          scale: 2.5,
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -115,6 +113,8 @@ class _HomePageState extends State<HomePage> {
                           builder: (context) => ProgressScreen()));
                 },
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.donut_large,
@@ -125,13 +125,14 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Text(
                       "查看翻譯進度",
+                      textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 25),
                     )
                   ],
                 ),
               ),
               SizedBox(
-                width: MediaQuery.of(context).size.width / 90,
+                height: MediaQuery.of(context).size.width / 130,
               ),
               TextButton(
                 onPressed: () {
@@ -147,6 +148,8 @@ class _HomePageState extends State<HomePage> {
                   }
                 },
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.translate,
@@ -155,7 +158,9 @@ class _HomePageState extends State<HomePage> {
                     SizedBox(
                       width: 5,
                     ),
-                    Text("翻譯模組", style: TextStyle(fontSize: 25))
+                    Text("翻譯模組",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 25))
                   ],
                 ),
               ),

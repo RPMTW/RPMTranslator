@@ -16,6 +16,11 @@ class RPMTWData {
     "1.16": 14698,
     "1.17": 33894
   };
+  static Map<String, String> VersionsSha = {
+    "1.12": "Translated-1.12",
+    "1.16": "Translated",
+    "1.17": "Translated-1.17"
+  };
   static int CrowdinID = 442446;
   static String TraditionalChineseTaiwan = 'zh-TW';
   static String MarkUp = 'up';
