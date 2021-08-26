@@ -275,7 +275,7 @@ class ModsScreen_ extends State<ModsScreen> {
                                                                                 ),
                                                                               ),
                                                                               Positioned(
-                                                                                child: Text((snapshot.data * 100).toStringAsFixed(2), textAlign: TextAlign.center),
+                                                                                child: Text("${(snapshot.data * 100).toInt()}%", textAlign: TextAlign.center),
                                                                                 top: 15,
                                                                                 left: 0,
                                                                                 bottom: 15,
