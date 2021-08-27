@@ -91,7 +91,7 @@ class Account {
   }
 
   static void logout() {
-    if (kIsWeb) return;
+    if (kIsWeb) return window.localStorage.clear();
     _account = {};
     save();
   }
@@ -102,6 +102,7 @@ class Account {
   }
 
   static void change(Map Json) {
+    if (kIsWeb) return window.localStorage.addAll(Json.cast<String, String>());
     _account = Json;
     save();
   }
