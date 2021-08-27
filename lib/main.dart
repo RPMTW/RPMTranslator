@@ -35,7 +35,7 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: HomePage.route,
       onGenerateRoute: (settings) {
-        if (settings.name == HomePage.route || settings.name == 'index.html') {
+        if (settings.name == HomePage.route || settings.name == '/index.html') {
           return MaterialPageRoute(builder: (context) => HomePage());
         }
 
