@@ -1,3 +1,4 @@
+<!-- 特別感謝 猴子#3807 協助製作 -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,10 +24,13 @@
                     localStorage.setItem("RefreshToken", json.refresh_token)
                     localStorage.setItem("UserID", json_['data']['id'])
                     localStorage.setItem("Expired", "false")
+                    document.location.href = "/index.html?auth-code=success"
+                } else {
+                    document.location.href = "/index.html?auth-code=error"
                 }
-            }).then(() => (document.location.href = "/index.html"))
+            });
         } else {
-            document.location.href = "/index.html"
+            document.location.href = "/index.html?auth-code=error"
         }
     </script>
 </body>
