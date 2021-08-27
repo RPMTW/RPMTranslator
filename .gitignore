@@ -3,7 +3,7 @@
 # Files and directories created by pub
 .dart_tool/
 .packages
-docs/index.html
+docs/CNAME
 build/
 # If you're building an application, you may want to check-in your pubspec.lock
 pubspec.lock
@@ -16,3 +16,4 @@ doc/api/
 *.js.deps
 *.js.map
 lib/generated_plugin_registrant.dart
+docs/index.html
