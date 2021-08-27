@@ -10518,7 +10518,7 @@ while(true)switch(s){case 0:l=t.N
 k=P.ak(["Access-Control-Allow-Origin","*","Content-Type","application/json"],l,l)
 k.N(0,$.a_o)
 s=3
-return P.X(G.ai5(P.dJ("https://accounts.crowdin.com/oauth/token",0,null),C.a0.hA(P.ak(["grant_type","refresh_token","client_id","hxk05Ij1xVFDEemvb2Ra","client_secret","l6maTnuFjLwqx9nDAbCiB42CHTzqyJnPko9qzRrv","refresh_token",a],l,l)),k),$async$Sk)
+return P.X(G.ai5(P.dJ("https://rear-end.a102009102009.repl.co/crowdin/api?url=https://accounts.crowdin.com/oauth/token",0,null),C.a0.hA(P.ak(["grant_type","refresh_token","client_id","hxk05Ij1xVFDEemvb2Ra","client_secret","l6maTnuFjLwqx9nDAbCiB42CHTzqyJnPko9qzRrv","refresh_token",a],l,l)),k),$async$Sk)
 case 3:p=c
 o=C.a0.bn(0,B.eR(J.I(U.eQ(p.e).c.a,"charset")).bn(0,p.x))
 if(p.b===200){n=$.aok()
@@ -19879,7 +19879,7 @@ Si(a,b){var s=0,r=P.R(t.g),q,p
 var $async$Si=P.N(function(c,d){if(c===1)return P.O(d,r)
 while(true)switch(s){case 0:p=t.N
 s=3
-return P.X(Y.fF("https://api.crowdin.com/api/v2/projects/442446/votes/?translationId="+a+"&stringId="+b+"&languageId=zh-TW",P.ak(["Access-Control-Allow-Headers","*"],p,p)),$async$Si)
+return P.X(Y.fF("https://rear-end.a102009102009.repl.co/crowdin/api?url=/projects/442446/votes/?translationId="+a+"&stringId="+b+"&languageId=zh-TW",P.ak(["Access-Control-Allow-Headers","*"],p,p)),$async$Si)
 case 3:q=d
 s=1
 break
@@ -19903,7 +19903,7 @@ Sd(a,b){var s=0,r=P.R(t.g),q,p
 var $async$Sd=P.N(function(c,d){if(c===1)return P.O(d,r)
 while(true)switch(s){case 0:p=t.N
 s=3
-return P.X(Y.fF("https://api.crowdin.com/api/v2/projects/442446/comments/?stringId="+a+"&offset="+b*20+"&limit=20",P.ak(["Access-Control-Allow-Headers","*"],p,p)),$async$Sd)
+return P.X(Y.fF("https://rear-end.a102009102009.repl.co/crowdin/api?url=/projects/442446/comments/?stringId="+a+"&offset="+b*20+"&limit=20",P.ak(["Access-Control-Allow-Headers","*"],p,p)),$async$Sd)
 case 3:q=d
 s=1
 break
