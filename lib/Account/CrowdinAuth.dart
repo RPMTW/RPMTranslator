@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:rpmtranslator/API/APIs.dart';
 import 'package:rpmtranslator/API/RPMTWData.dart';
 import 'package:rpmtranslator/Account/Account.dart';
 
@@ -40,15 +41,16 @@ class CrowdinAuthHandler {
       'Content-Type': 'application/json',
     };
     headers.addAll(RPMTWData.UserAgent);
-    Response response =
-        await http.post(Uri.parse("https://accounts.crowdin.com/oauth/token"),
-            headers: headers,
-            body: json.encode({
-              "grant_type": "refresh_token",
-              "client_id": "hxk05Ij1xVFDEemvb2Ra",
-              "client_secret": "l6maTnuFjLwqx9nDAbCiB42CHTzqyJnPko9qzRrv",
-              "refresh_token": refreshToken
-            }));
+    Response response = await http.post(
+        Uri.parse(
+            "$RPMCrowdinBaseAPI?url=https://accounts.crowdin.com/oauth/token"),
+        headers: headers,
+        body: json.encode({
+          "grant_type": "refresh_token",
+          "client_id": "hxk05Ij1xVFDEemvb2Ra",
+          "client_secret": "l6maTnuFjLwqx9nDAbCiB42CHTzqyJnPko9qzRrv",
+          "refresh_token": refreshToken
+        }));
     Map data = json.decode(response.body);
     if (response.statusCode == 200) {
       Map account = Account.get();

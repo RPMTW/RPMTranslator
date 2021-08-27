@@ -150,7 +150,7 @@ class CrowdinAPI {
   static Future<List?> getTranslationVotes(
       int TranslationID, int StringID) async {
     String url =
-        "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/votes/?translationId=$TranslationID&stringId=$StringID&languageId=${RPMTWData.TraditionalChineseTaiwan}";
+        "$RPMCrowdinBaseAPI?url=/projects/${RPMTWData.CrowdinID}/votes/?translationId=$TranslationID&stringId=$StringID&languageId=${RPMTWData.TraditionalChineseTaiwan}";
     dynamic data = await baseGet(url, {'Access-Control-Allow-Headers': '*'});
     return data;
   }
@@ -178,7 +178,7 @@ class CrowdinAPI {
 
   static Future<List?> getCommentsByString(int StringID, int Page) async {
     String url =
-        "$CrowdinBaseAPI/projects/${RPMTWData.CrowdinID}/comments/?stringId=$StringID&offset=${Page * 20}&limit=20";
+        "$RPMCrowdinBaseAPI?url=/projects/${RPMTWData.CrowdinID}/comments/?stringId=$StringID&offset=${Page * 20}&limit=20";
     dynamic data = await baseGet(url, {'Access-Control-Allow-Headers': '*'});
     return data;
   }

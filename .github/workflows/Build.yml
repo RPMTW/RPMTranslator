@@ -4,9 +4,6 @@ on:
   push:
     branches:
     - main
-  pull_request:
-    branches:
-    - main
     
   workflow_dispatch:
 
@@ -14,10 +11,6 @@ jobs:
   Web:
     runs-on: ubuntu-latest
     steps:
-    - name: Set up Python 3.x
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.9'
     - uses: actions/checkout@v2
     - uses: subosito/flutter-action@v1
       with:
@@ -27,11 +20,6 @@ jobs:
     - run: rm -rf ${{ github.workspace }}/docs*
     - run: cp -r ${{ github.workspace }}/build/web ${{ github.workspace }}/docs
     - run: echo translator.rpmtw.ga >> "${{ github.workspace }}/docs/CNAME"
-    - name: "Upload Artifact"
-      uses: actions/upload-artifact@v1
-      with:
-        name: RPMTranslator-${{ github.run_number }}-web
-        path: ${{ github.workspace }}/build/web
 
     - name: "Update File"
       run: |
