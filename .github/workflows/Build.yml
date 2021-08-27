@@ -57,7 +57,7 @@ jobs:
        channel: 'dev'
     - run: flutter pub get
     - run: flutter build web --web-renderer html --release
-    - run: cp -f ${{ github.workspace }}/build/web ${{ github.workspace }}/docs
+    - run: cp -f -r ${{ github.workspace }}/build/web ${{ github.workspace }}/docs
     - name: "Upload Artifact"
       uses: actions/upload-artifact@v1
       with:
