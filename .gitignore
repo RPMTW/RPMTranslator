@@ -16,4 +16,3 @@ doc/api/
 *.js.deps
 *.js.map
 lib/generated_plugin_registrant.dart
-docs/index.html
