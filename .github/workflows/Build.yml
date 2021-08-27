@@ -44,3 +44,40 @@ jobs:
         with:
           name: RPMTranslator-${{ github.run_number }}-windows
           path: ${{ github.workspace }}/build/windows/runner/Release
+  Web:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Python 3.x
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+    - uses: actions/checkout@v2
+    - uses: subosito/flutter-action@v1
+      with:
+       channel: 'dev'
+    - run: flutter pub get
+    - run: flutter build web --web-renderer html --release
+    - run: rm -rf ${{ github.workspace }}/docs*
+    - run: cp -r ${{ github.workspace }}/build/web ${{ github.workspace }}/docs
+    - name: "Upload Artifact"
+      uses: actions/upload-artifact@v1
+      with:
+        name: RPMTranslator-${{ github.run_number }}-web
+        path: ${{ github.workspace }}/build/web
+
+    - name: "Update File"
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'actions@users.noreply.github.com'
+        @"
+        protocol=https
+        host=github.com
+        username=github-actions[bot]
+        password=${{ secrets.GITHUB_TOKEN }}
+        "@ > .\1.txt
+        gc 1.txt|git credential-manager  store
+        ri .\1.txt -Force
+        git add ${{ github.workspace }}/docs
+        git commit -m "Update Website"
+        git push origin HEAD:${{ github.ref }}
+      shell: pwsh           
