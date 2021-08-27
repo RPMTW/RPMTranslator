@@ -9,7 +9,8 @@
 </head>
 
 <body>
-    <script>let urlParams = new URLSearchParams(window.location.search);
+    <script>
+        let urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has("data")) {
             let json = JSON.parse(urlParams.get("data"));
             fetch("https://api.crowdin.com/api/v2/user", {
@@ -30,7 +31,7 @@
                 }
             });
         } else {
-            document.location.href = "/index.html?auth-code=error"
+            document.location.href = "?auth-code=error"
         }
     </script>
 </body>

@@ -36,6 +36,7 @@ class CrowdinAuthHandler {
 
   static Future<bool> RefreshToken(String refreshToken) async {
     Map<String, String> headers = {
+      'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json',
     };
     headers.addAll(RPMTWData.UserAgent);

@@ -150,7 +150,7 @@ class CrowdinAPI {
   static Future<List?> getTranslationVotes(
       int TranslationID, int StringID) async {
     String url =
-        "$RPMCrowdinBaseAPI?url=/projects/${RPMTWData.CrowdinID}/votes/?translationId=$TranslationID&stringId=$StringID&languageId=${RPMTWData.TraditionalChineseTaiwan}";
+        "$CrowdinAPI/projects/${RPMTWData.CrowdinID}/votes/?translationId=$TranslationID&stringId=$StringID&languageId=${RPMTWData.TraditionalChineseTaiwan}";
     dynamic data = await baseGet(url, {'Access-Control-Allow-Headers': '*'});
     return data;
   }
