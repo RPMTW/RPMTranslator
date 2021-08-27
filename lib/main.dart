@@ -10,6 +10,7 @@ import 'package:rpmtranslator/Widget/OkClose.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'Screen/Progress.dart';
 import 'Screen/Mods.dart';
+import 'Screen/Scaffold.dart';
 import 'Screen/UnknownScreen.dart';
 import 'Utility/utility.dart';
 
@@ -32,43 +33,42 @@ class App extends StatelessWidget {
       title: 'RPMTranslator - RPMTW 模組專屬翻譯器',
       theme: ThemeData(brightness: Brightness.dark, fontFamily: 'font'),
       debugShowCheckedModeBanner: false,
+      initialRoute: HomePage.route,
       onGenerateRoute: (settings) {
-        // Handle '/'
-        if (settings.name == '/') {
-          return MaterialPageRoute(
-              builder: (context) =>
-                  HomePage(title: 'RPMTranslator - RPMTW 模組專屬翻譯器'));
+        if (settings.name == HomePage.route || settings.name == 'index.html') {
+          return MaterialPageRoute(builder: (context) => HomePage());
         }
 
-        // Handle '?auth-code=${code}'
+        // '?auth-code=${AuthCode}'
         var uri = Uri.parse(settings.name!);
         if (uri.queryParameters.containsKey('auth-code')) {
           var AuthCode = uri.queryParameters['auth-code'];
-          print(AuthCode);
           if (AuthCode == "error") {
-            return DialogRoute(
-                context: context,
-                builder: (context) => AlertDialog(
-                      title: Text("提示資訊"),
-                      content:
-                          Text("登入帳號失敗，請嘗試重新登入，如果仍然失敗，請前往我們的 Discord 伺服器詢問"),
-                      actions: [
-                        IconButton(
-                          icon: Icon(Icons.manage_accounts),
-                          onPressed: () {
-                            utility.IsWebAccount(context);
-                          },
-                          tooltip: "重新登入帳號",
-                        ),
-                      ],
+            return MaterialPageRoute(
+                builder: (context) => RPMScaffold(
+                      child: AlertDialog(
+                        title: Text("提示資訊"),
+                        content:
+                            Text("登入帳號失敗，請嘗試重新登入，如果仍然失敗，請前往我們的 Discord 伺服器詢問"),
+                        actions: [
+                          IconButton(
+                            icon: Icon(Icons.manage_accounts),
+                            onPressed: () {
+                              utility.IsWebAccount(context);
+                            },
+                            tooltip: "重新登入帳號",
+                          ),
+                        ],
+                      ),
                     ));
           } else if (AuthCode == "success") {
-            return DialogRoute(
-                context: context,
-                builder: (context) => AlertDialog(
-                      title: Text("提示資訊"),
-                      content: Text("登入帳號成功"),
-                      actions: [OkClose()],
+            return MaterialPageRoute(
+                builder: (context) => RPMScaffold(
+                      child: AlertDialog(
+                        title: Text("提示資訊"),
+                        content: Text("登入帳號成功"),
+                        actions: [OkClose()],
+                      ),
                     ));
           }
         }
@@ -80,8 +80,8 @@ class App extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.title}) : super(key: key);
-  final String title;
+  static String route = "/";
+  const HomePage({Key? key}) : super(key: key);
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -115,7 +115,7 @@ class _HomePageState extends State<HomePage> {
                   tooltip: "官方網站"),
               Flexible(
                 child: Center(
-                  child: Text(widget.title),
+                  child: Text("RPMTranslator - RPMTW 模組專屬翻譯器"),
                 ),
               ),
             ],
