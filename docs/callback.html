@@ -25,13 +25,11 @@
                     localStorage.setItem("RefreshToken", json.refresh_token)
                     localStorage.setItem("UserID", json_['data']['id'])
                     localStorage.setItem("Expired", "false")
-                    document.location.href = "?auth-code=success"
-                } else {
-                    document.location.href = "?auth-code=error"
                 }
+                document.location.href = "/index.html?auth-code=success"
             });
         } else {
-            document.location.href = "?auth-code=error"
+            document.location.href = "/index.html?auth-code=success"
         }
     </script>
 </body>
