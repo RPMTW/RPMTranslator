@@ -129,20 +129,6 @@ class _HomePageState extends State<HomePage> {
               },
               tooltip: "登入帳號",
             ),
-            Builder(builder: (context) {
-              if (kIsWeb) {
-                return IconButton(
-                  icon: Icon(Icons.desktop_windows),
-                  onPressed: () {
-                    utility.OpenUrl(
-                        "https://github.com/RPMTW/RPMTranslator/releases");
-                  },
-                  tooltip: "下載桌面版",
-                );
-              } else {
-                return Container();
-              }
-            })
           ]),
       body: Center(
         child: Transform.scale(
