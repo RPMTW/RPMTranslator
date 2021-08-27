@@ -57,7 +57,9 @@ jobs:
        channel: 'dev'
     - run: flutter pub get
     - run: flutter build web --web-renderer html --release
-    - run: mv --force ${{ github.workspace }}/build/web ${{ github.workspace }}/docs
+    - run: rm -rf ${{ github.workspace }}/docs*
+    - run: cp -r ${{ github.workspace }}/build/web ${{ github.workspace }}/docs
+    - run: echo translator.rpmtw.ga >> "${{ github.workspace }}/docs/CNAME"
     - name: "Upload Artifact"
       uses: actions/upload-artifact@v1
       with:
