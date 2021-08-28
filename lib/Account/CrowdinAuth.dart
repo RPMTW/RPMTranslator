@@ -41,16 +41,11 @@ class CrowdinAuthHandler {
       'Content-Type': 'application/json',
     };
     headers.addAll(RPMTWData.UserAgent);
-    Response response = await http.post(
-        Uri.parse(
-            "$RPMCrowdinBaseAPI?url=https://accounts.crowdin.com/oauth/token"),
-        headers: headers,
-        body: json.encode({
-          "grant_type": "refresh_token",
-          "client_id": "hxk05Ij1xVFDEemvb2Ra",
-          "client_secret": "l6maTnuFjLwqx9nDAbCiB42CHTzqyJnPko9qzRrv",
-          "refresh_token": refreshToken
-        }));
+    Response response = await http.get(
+      Uri.parse(
+          "https://rear-end.a102009102009.repl.co/crowdin/auth/refreshToken?refreshToken=$refreshToken"),
+      headers: headers,
+    );
     Map data = json.decode(response.body);
     if (response.statusCode == 200) {
       Map account = Account.get();
