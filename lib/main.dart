@@ -8,9 +8,11 @@ import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Widget/AccountNone.dart';
 import 'package:rpmtranslator/Widget/OkClose.dart';
 import 'package:url_strategy/url_strategy.dart';
+import 'Screen/Files.dart';
 import 'Screen/Progress.dart';
 import 'Screen/Mods.dart';
 import 'Screen/Scaffold.dart';
+import 'Screen/Translate.dart';
 import 'Screen/UnknownScreen.dart';
 import 'Utility/utility.dart';
 
@@ -36,7 +38,8 @@ class App extends StatelessWidget {
       initialRoute: HomePage.route,
       onGenerateRoute: (settings) {
         if (settings.name == HomePage.route || settings.name == '/index.html') {
-          return MaterialPageRoute(builder: (context) => HomePage());
+          return MaterialPageRoute(
+              settings: settings, builder: (context) => HomePage());
         }
 
         // '?auth-code=${AuthCode}'
@@ -45,6 +48,7 @@ class App extends StatelessWidget {
           var AuthCode = uri.queryParameters['auth-code'];
           if (AuthCode == "error") {
             return MaterialPageRoute(
+                settings: settings,
                 builder: (context) => RPMScaffold(
                       child: AlertDialog(
                         title: Text("提示資訊"),
@@ -63,6 +67,7 @@ class App extends StatelessWidget {
                     ));
           } else if (AuthCode == "success") {
             return MaterialPageRoute(
+                settings: settings,
                 builder: (context) => RPMScaffold(
                       child: AlertDialog(
                         title: Text("提示資訊"),
@@ -72,12 +77,30 @@ class App extends StatelessWidget {
                     ));
           }
         }
-        if (settings.name == ModsScreen.route) {
-          // "/mods" url
-          return MaterialPageRoute(builder: (context) => ModsScreen());
+        // "/mods" url
+        if (settings.name!.startsWith(ModsScreen.route)) {
+          if (settings.name == ModsScreen.route) {
+            return MaterialPageRoute(
+                settings: settings, builder: (context) => ModsScreen());
+          } else if (uri.pathSegments.length == 3) {
+            // "/mods/${CrowdinDirID}/files"
+            int CrowdinDirID = int.parse(uri.pathSegments[1]);
+            return MaterialPageRoute(
+                settings: settings,
+                builder: (context) => FilesScreen(DirID: CrowdinDirID));
+          } else if (uri.pathSegments.length == 3) {
+            // "/mods/${CrowdinDirID}/files/${CrowdinFileID}/translate"
+            int CrowdinFileID = int.parse(uri.pathSegments[3]);
+            return MaterialPageRoute(
+                settings: settings,
+                builder: (context) => TranslateScreen(
+                    FileID: CrowdinFileID,
+                    FileName: (settings.arguments! as Map)['FileName']));
+          }
         }
 
-        return MaterialPageRoute(builder: (context) => UnknownScreen());
+        return MaterialPageRoute(
+            settings: settings, builder: (context) => UnknownScreen());
       },
     );
   }

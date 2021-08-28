@@ -343,13 +343,19 @@ class ModsScreen_ extends State<ModsScreen> {
                                                           ),
                                                           title: Text(DirName),
                                                           onTap: () {
+                                                            int CrowdinDirID =
+                                                                data['id'];
                                                             showDialog(
+                                                                routeSettings:
+                                                                    RouteSettings(
+                                                                        name:
+                                                                            "/mods/$CrowdinDirID/files"),
                                                                 context:
                                                                     context,
                                                                 builder: (context) =>
                                                                     FilesScreen(
-                                                                        DirID: data[
-                                                                            'id']));
+                                                                        DirID:
+                                                                            CrowdinDirID));
                                                           },
                                                           trailing: SizedBox(
                                                             width: 50,

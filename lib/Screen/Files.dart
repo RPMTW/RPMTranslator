@@ -20,7 +20,6 @@ class FilesScreen_ extends State<FilesScreen> {
   final int DirID;
 
   FilesScreen_({required this.DirID});
-
   @override
   void initState() {
     super.initState();
@@ -140,10 +139,17 @@ class FilesScreen_ extends State<FilesScreen> {
                                     title: Text(FileName,
                                         textAlign: TextAlign.center),
                                     onTap: () {
+                                      int CrowdinFileID = data['id'];
                                       showDialog(
+                                          routeSettings: RouteSettings(
+                                              name:
+                                                  "${ModalRoute.of(context)!.settings.name}/$CrowdinFileID/translate",
+                                              arguments: {
+                                                "FileName": FileName
+                                              }),
                                           context: context,
                                           builder: (context) => TranslateScreen(
-                                              FileID: data['id'],
+                                              FileID: CrowdinFileID,
                                               FileName: FileName));
                                     },
                                     trailing: PopupMenuButton(
