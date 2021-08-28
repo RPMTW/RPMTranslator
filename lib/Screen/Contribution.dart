@@ -2,6 +2,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmtranslator/API/RPMTWData.dart';
+import 'package:rpmtranslator/Widget/OkClose.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../main.dart';
@@ -14,20 +15,11 @@ class ContributionScreen_ extends State<ContributionScreen> {
     setState(() {});
   }
 
-  var title_ = TextStyle(
-    fontSize: 25.0,
-  );
-
-  var title2_ = TextStyle(
-    color: Colors.white60,
-    fontSize: 18.0,
-  );
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("翻譯貢獻者 (一個月內)"),
+        title: Text("翻譯貢獻者排名 (一個月內)"),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           tooltip: "返回",
@@ -47,64 +39,73 @@ class ContributionScreen_ extends State<ContributionScreen> {
               future: RPMTWData.getContribution(),
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
-                  Size size = MediaQuery.of(context).size;
-
-                  return GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 5),
+                  return ListView.builder(
                       itemCount: snapshot.data.length,
                       itemBuilder: (context, index) {
                         Map data = snapshot.data[index];
                         Map user = data["user"];
                         return DecoratedBox(
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white12),
+                            border: Border.all(color: Colors.white12, width: 1),
                           ),
-                          child: InkWell(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
+                          child: ListTile(
+                            leading: Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                SizedBox(
-                                  width: 100,
-                                  height: 100,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(100),
-                                    child: Image.network(user['avatarUrl']),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text("第 ${index + 1} 名",
+                                Text((index + 1).toString(),
                                     style: TextStyle(
                                         fontSize: 30, color: Colors.blue)),
                                 SizedBox(
-                                  height: 50,
-                                  width: user['fullName'].length * 15 > 300
-                                      ? 300
-                                      : user['fullName'].length * 15,
-                                  child: AutoSizeText(user['fullName'],
-                                      style: title_,
-                                      textAlign: TextAlign.center),
+                                  width: 10,
                                 ),
-                                SizedBox(
-                                  height: 10,
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: Image.network(user['avatarUrl']),
                                 ),
-                                Text("翻譯字數: ${data['translated']}",
-                                    style: title2_),
-                                Text("投票次數: ${data['voted']}", style: title2_),
-                                Text("翻譯獲得稱讚次數: ${data['winning']}",
-                                    style: title2_),
-                                Text(
-                                    "加入時間: ${RPMTWData.FormatIsoTime(user['joined'])}",
-                                    style: title2_),
                               ],
                             ),
+                            title: Text(user['fullName'],
+                                style: TextStyle(fontSize: 30),
+                                textAlign: TextAlign.center),
                             onTap: () {
-                              launch(
-                                  "https://crowdin.com/profile/${user['username']}");
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text("詳細資訊",
+                                          textAlign: TextAlign.center),
+                                      content: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            "翻譯字數: ${data['translated']}",
+                                          ),
+                                          Text(
+                                            "投票次數: ${data['voted']}",
+                                          ),
+                                          Text(
+                                            "翻譯獲得稱讚次數: ${data['winning']}",
+                                          ),
+                                          Text(
+                                            "加入時間: ${RPMTWData.FormatIsoTime(user['joined'])}",
+                                          ),
+                                        ],
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              launch(
+                                                  "https://crowdin.com/profile/${user['username']}");
+                                            },
+                                            child: Text("在Crowdin上查看")),
+                                        OkClose()
+                                      ],
+                                    );
+                                  });
                             },
                           ),
                         );

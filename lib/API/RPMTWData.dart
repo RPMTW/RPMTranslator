@@ -103,6 +103,6 @@ class RPMTWData {
   static String FormatIsoTime(String IsoTime) {
     DateTime Time = DateTime.parse(IsoTime);
 
-    return "${Time.year}年 ${Time.month}月 ${Time.day}日 ${Time.hour}時 ${Time.minute}分鐘 ${Time.second}秒";
+    return "${Time.year}年${Time.month}月${Time.day}日${Time.hour}時${Time.minute}分鐘${Time.second}秒";
   }
 }
