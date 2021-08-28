@@ -64,6 +64,12 @@ class RPMTWData {
     return data;
   }
 
+  static Future<List> getContribution() async {
+    Response response = await get(Uri.parse(RPMTWContributionAPI));
+    List data = json.decode(response.body)['data'];
+    return data;
+  }
+
   static Future<Map> getCurseForgeIndex(double VersionID) async {
     String GitVersion = VersionID == 1.16 ? "Original" : "Original-$VersionID";
     Response response = await get(Uri.parse(

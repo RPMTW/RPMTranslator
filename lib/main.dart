@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmtranslator/API/APIs.dart';
 import 'package:rpmtranslator/Account/Account.dart';
+import 'package:rpmtranslator/Screen/Contribution.dart';
 import 'package:rpmtranslator/Widget/AccountNone.dart';
 import 'package:rpmtranslator/Widget/OkClose.dart';
 import 'package:url_strategy/url_strategy.dart';
@@ -102,6 +103,11 @@ class App extends StatelessWidget {
         if (settings.name == ProgressScreen.route) {
           return MaterialPageRoute(
               settings: settings, builder: (context) => ProgressScreen());
+        }
+
+        if (settings.name == ContributionScreen.route) {
+          return MaterialPageRoute(
+              settings: settings, builder: (context) => ContributionScreen());
         }
 
         return MaterialPageRoute(
@@ -221,6 +227,32 @@ class _HomePageState extends State<HomePage> {
                     Text("翻譯模組",
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 25))
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.width / 130,
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, ContributionScreen.route);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.people,
+                      color: Colors.blue,
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      "查看翻譯貢獻者",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 25),
+                    )
                   ],
                 ),
               ),
