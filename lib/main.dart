@@ -143,20 +143,14 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Row(
-            children: [
-              IconButton(
-                  icon: Icon(Icons.home),
-                  onPressed: () async {
-                    await utility.OpenUrl(HomePageUrl);
-                  },
-                  tooltip: "官方網站"),
-              Flexible(
-                child: Center(
-                  child: Text("RPMTranslator - RPMTW 模組專屬翻譯器"),
-                ),
-              ),
-            ],
+          leading: IconButton(
+              icon: Icon(Icons.home),
+              onPressed: () async {
+                await utility.OpenUrl(HomePageUrl);
+              },
+              tooltip: "官方網站"),
+          title: Center(
+            child: Text("RPMTranslator - RPMTW 模組專屬翻譯器"),
           ),
           centerTitle: true,
           actions: [
