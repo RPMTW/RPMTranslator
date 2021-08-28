@@ -89,14 +89,14 @@ class App extends StatelessWidget {
             return MaterialPageRoute(
                 settings: settings,
                 builder: (context) => FilesScreen(DirID: CrowdinDirID));
-          } else if (uri.pathSegments.length == 3) {
-            // "/mods/${CrowdinDirID}/files/${CrowdinFileID}/translate"
+          } else if (uri.pathSegments.length == 5) {
+            // "/mods/${CrowdinDirID}/files/${CrowdinFileID}/translate?FileName=${FileName}"
+            String? FileName = uri.queryParameters['FileName'];
             int CrowdinFileID = int.parse(uri.pathSegments[3]);
             return MaterialPageRoute(
                 settings: settings,
-                builder: (context) => TranslateScreen(
-                    FileID: CrowdinFileID,
-                    FileName: (settings.arguments! as Map)['FileName']));
+                builder: (context) =>
+                    TranslateScreen(FileID: CrowdinFileID, FileName: FileName));
           }
         }
 

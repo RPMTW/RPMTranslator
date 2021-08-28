@@ -142,11 +142,9 @@ class FilesScreen_ extends State<FilesScreen> {
                                       int CrowdinFileID = data['id'];
                                       showDialog(
                                           routeSettings: RouteSettings(
-                                              name:
-                                                  "${ModalRoute.of(context)!.settings.name}/$CrowdinFileID/translate",
-                                              arguments: {
-                                                "FileName": FileName
-                                              }),
+                                            name:
+                                                "${ModalRoute.of(context)!.settings.name}/$CrowdinFileID/translate?FileName=$FileName",
+                                          ),
                                           context: context,
                                           builder: (context) => TranslateScreen(
                                               FileID: CrowdinFileID,
