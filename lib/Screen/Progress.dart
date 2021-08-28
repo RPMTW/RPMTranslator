@@ -178,6 +178,7 @@ class ProgressCard_ extends State<ProgressCard> with TickerProviderStateMixin {
 }
 
 class ProgressScreen extends StatefulWidget {
+  static String route = "/progress";
   @override
   ProgressScreen_ createState() => ProgressScreen_();
 }

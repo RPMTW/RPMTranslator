@@ -99,6 +99,11 @@ class App extends StatelessWidget {
           }
         }
 
+        if (settings.name == ProgressScreen.route) {
+          return MaterialPageRoute(
+              settings: settings, builder: (context) => ProgressScreen());
+        }
+
         return MaterialPageRoute(
             settings: settings, builder: (context) => UnknownScreen());
       },
@@ -166,10 +171,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               TextButton(
                 onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ProgressScreen()));
+                  Navigator.pushNamed(context, ProgressScreen.route);
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
