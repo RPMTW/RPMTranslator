@@ -52,8 +52,8 @@ class CrowdinAuthHandler {
       Account.change({
         "AccessToken": data["access_token"],
         "RefreshToken": data['refresh_token'],
-        "UserID": account['UserID'],
-        "Expired": false
+        "UserID": account['UserID'].toString(),
+        "Expired": 'false'
       });
       return true;
     } else {
