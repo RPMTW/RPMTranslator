@@ -27,3 +27,5 @@ jobs:
         git config --global user.name "翻譯網站更新機器人"
         git add ${{ github.workspace }}/docs
         git commit -m "Update Website"
+        git push origin HEAD:${{ github.ref }}
+      shell: pwsh
