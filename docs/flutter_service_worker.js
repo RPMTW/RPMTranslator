@@ -16,6 +16,7 @@ const RESOURCES = {
 "callback.html": "2d2f9e7a0fa37e027359a2a9a77c75d3",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
 "manifest.json": "a2cdc0c347c7009cc096f4c344a62716",
+"404.html": "bf0cd03347149e7d77bcadcc4e6cd945",
 "version.json": "f377dcddf44338a74af9d0b366d4613c",
 "main.dart.js": "9573249721af796b4b31a3032ce0f884",
 "index.html": "bf0cd03347149e7d77bcadcc4e6cd945",
