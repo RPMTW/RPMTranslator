@@ -8,6 +8,9 @@
             "name": "rpmtranslator",
             "request": "launch",
             "type": "dart",
+            "args": [
+                "--web-port=54091"
+            ],
             "externalConsole": true,
         },
         {

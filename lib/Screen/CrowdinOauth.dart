@@ -55,8 +55,7 @@ class _CrowdinOauthState extends State<CrowdinAuthScreen> {
                     icon: Icon(Icons.close),
                     tooltip: "確定",
                     onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => App()));
+                      Navigator.pushNamed(context, HomePage.route);
                     },
                   )
                 ],
