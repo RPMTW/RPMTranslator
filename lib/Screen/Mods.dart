@@ -455,6 +455,7 @@ class ModsScreen_ extends State<ModsScreen> {
 }
 
 class ModsScreen extends StatefulWidget {
+  static String route = "/mods";
   @override
   ModsScreen_ createState() => ModsScreen_();
 }

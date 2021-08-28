@@ -72,6 +72,10 @@ class App extends StatelessWidget {
                     ));
           }
         }
+        if (settings.name == ModsScreen.route) {
+          // "/mods" url
+          return MaterialPageRoute(builder: (context) => ModsScreen());
+        }
 
         return MaterialPageRoute(builder: (context) => UnknownScreen());
       },
@@ -169,8 +173,7 @@ class _HomePageState extends State<HomePage> {
               TextButton(
                 onPressed: () {
                   if (Account.has() && !Account.expired()) {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => ModsScreen()));
+                    Navigator.pushNamed(context, ModsScreen.route);
                   } else {
                     showDialog(
                         context: context,
