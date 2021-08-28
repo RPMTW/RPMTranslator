@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rpmtranslator/API/CrowdinAPI.dart';
 import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Widget/AccountNone.dart';
+import 'package:split_view/split_view.dart';
 
 import 'DownloadFile.dart';
 import 'Translate.dart';
@@ -43,71 +44,77 @@ class FilesScreen_ extends State<FilesScreen> {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Column(
+      body: SplitView(
+          gripSize: 0,
+          controller: SplitViewController(weights: [0.1, 0.8, 0.1]),
+          viewMode: SplitViewMode.Vertical,
           children: [
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  width: 30,
-                ),
-                Text(
-                  "搜尋模組",
-                  style: title_,
-                ),
-                SizedBox(
-                  width: 12,
-                ),
-                Expanded(
-                    child: TextField(
-                  textAlign: TextAlign.center,
-                  controller: SearchController,
-                  decoration: InputDecoration(
-                    hintText: "請輸入檔案名稱",
-                    enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.lightBlue, width: 5.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.lightBlue, width: 3.0),
-                    ),
-                    contentPadding: EdgeInsets.zero,
-                    border: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
+            Container(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 20,
                   ),
-                )),
-                SizedBox(
-                  width: 12,
-                ),
-                ElevatedButton(
-                  style: new ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(Colors.deepPurpleAccent)),
-                  onPressed: () {
-                    FilesPageController.animateToPage(0,
-                        curve: Curves.easeOut,
-                        duration: const Duration(milliseconds: 300));
-                    setState(() {});
-                  },
-                  child: Text(
-                    "搜尋",
-                    style: title_,
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: 30,
+                      ),
+                      Text(
+                        "搜尋檔案",
+                        style: title_,
+                      ),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Expanded(
+                          child: TextField(
+                        textAlign: TextAlign.center,
+                        controller: SearchController,
+                        decoration: InputDecoration(
+                          hintText: "請輸入檔案名稱",
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.lightBlue, width: 5.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.lightBlue, width: 3.0),
+                          ),
+                          contentPadding: EdgeInsets.zero,
+                          border: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                        ),
+                      )),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      ElevatedButton(
+                        style: new ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                Colors.deepPurpleAccent)),
+                        onPressed: () {
+                          FilesPageController.animateToPage(0,
+                              curve: Curves.easeOut,
+                              duration: const Duration(milliseconds: 300));
+                          setState(() {});
+                        },
+                        child: Text(
+                          "搜尋",
+                          style: title_,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 30,
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(
-                  width: 30,
-                ),
-              ],
+                ],
+              ),
             ),
             Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 1.3,
               child: PageView.builder(
                   controller: FilesPageController,
                   scrollDirection: Axis.horizontal,
@@ -239,9 +246,7 @@ class FilesScreen_ extends State<FilesScreen> {
                 ],
               );
             })
-          ],
-        ),
-      ),
+          ]),
     );
   }
 }

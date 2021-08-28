@@ -55,8 +55,6 @@ class ModsScreen_ extends State<ModsScreen> {
         viewMode: SplitViewMode.Vertical,
         children: [
           Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
             child: Column(
               children: [
                 SizedBox(
@@ -204,8 +202,6 @@ class ModsScreen_ extends State<ModsScreen> {
             ),
           ),
           Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
               child: FutureBuilder(
                   future:
                       RPMTWData.getCurseForgeIndex(double.parse(VersionItem)),
