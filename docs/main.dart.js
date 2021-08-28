@@ -64315,7 +64315,7 @@ s=G.ahc(new L.Sm(this.a,b),!0,!0,!0,q)
 return new B.Dx(C.yE,s,r,C.l,!1,r,!0,C.fY,!1,r,q,C.ae,C.iz,r,C.ay,r)}else return T.cr(U.cB(r),r,r)},
 $S:17}
 L.Sm.prototype={
-$2(a,b){var s=null,r="fullName",q=J.G(this.b.b,b),p=J.ac(q),o=p.h(q,"user"),n=F.aru(C.bD),m=J.ac(o),l=T.as(T.C4(K.tm(100),U.oR(m.h(o,"avatarUrl"),s,s,s,s)),100,100),k=T.as(s,10,s),j=L.M("\u7b2c "+H.d(b)+" \u540d",s,s,s,s,s,s,s,A.bf(s,s,C.aH,s,s,s,s,s,s,s,s,30,s,s,s,s,!0,s,s,s,s,s,s,s,s),s,s,s),i=J.B7(J.aU(m.h(o,r)),15)>300?300:J.B7(J.aU(m.h(o,r)),15),h=this.a,g=h.f
+$2(a,b){var s=null,r="fullName",q=J.G(this.b.b,b),p=J.ac(q),o=p.h(q,"user"),n=F.aru(C.bD),m=J.ac(o),l=T.as(T.C4(K.tm(100),U.oR(m.h(o,"avatarUrl"),s,s,s,s)),100,100),k=T.as(s,10,s),j=L.M("\u7b2c "+(b+1)+" \u540d",s,s,s,s,s,s,s,A.bf(s,s,C.aH,s,s,s,s,s,s,s,s,30,s,s,s,s,!0,s,s,s,s,s,s,s,s),s,s,s),i=J.B7(J.aU(m.h(o,r)),15)>300?300:J.B7(J.aU(m.h(o,r)),15),h=this.a,g=h.f
 return M.ajW(R.uG(!1,s,!0,T.cK(H.a([l,k,j,T.as(M.o9(m.h(o,r),h.e,C.Q),50,i),T.as(s,10,s),L.M("\u7ffb\u8b6f\u5b57\u6578: "+H.d(p.h(q,"translated")),s,s,s,s,s,s,s,g,s,s,s),L.M("\u6295\u7968\u6b21\u6578: "+H.d(p.h(q,"voted")),s,s,s,s,s,s,s,g,s,s,s),L.M("\u7ffb\u8b6f\u7372\u5f97\u7a31\u8b9a\u6b21\u6578: "+H.d(p.h(q,"winning")),s,s,s,s,s,s,s,g,s,s,s),L.M("\u52a0\u5165\u6642\u9593: "+O.ah3(m.h(o,"joined")),s,s,s,s,s,s,s,g,s,s,s)],t.p),C.v,C.aj,C.a5),s,!0,s,s,s,s,s,s,s,s,s,new L.Sl(o),s,s,s),new S.dZ(s,s,n,s,s,s,C.ac),C.hn)},
 $S:379}
 L.Sl.prototype={
