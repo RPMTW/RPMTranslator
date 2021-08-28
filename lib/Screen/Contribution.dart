@@ -77,7 +77,7 @@ class ContributionScreen_ extends State<ContributionScreen> {
                                 SizedBox(
                                   height: 10,
                                 ),
-                                Text("第 $index 名",
+                                Text("第 ${index + 1} 名",
                                     style: TextStyle(
                                         fontSize: 30, color: Colors.blue)),
                                 SizedBox(
