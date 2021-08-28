@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rpmtranslator/Account/Account.dart';
 import 'package:rpmtranslator/Account/CrowdinAuth.dart';
 import 'package:rpmtranslator/Utility/utility.dart';
+import 'package:universal_html/html.dart';
 
 import '../main.dart';
 
@@ -50,8 +51,10 @@ class AccountWebScreen_ extends State<AccountWebScreen> {
             IconButton(
               icon: Icon(Icons.login),
               onPressed: () {
-                utility.OpenUrl(
-                    'https://accounts.crowdin.com/oauth/authorize?client_id=8HpxK2jINouRXTrVq6gf&redirect_uri=https://rear-end.a102009102009.repl.co/crowdin/oauth/auth/web&response_type=code&scope=project');
+                window.open(
+                    "https://accounts.crowdin.com/oauth/authorize?client_id=8HpxK2jINouRXTrVq6gf&redirect_uri=https://rear-end.a102009102009.repl.co/crowdin/oauth/auth/web&response_type=code&scope=project",
+                    "",
+                    "width=500,height=620");
               },
               tooltip: "登入",
             ),
