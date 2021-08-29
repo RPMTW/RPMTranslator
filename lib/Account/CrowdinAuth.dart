@@ -3,9 +3,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
-import 'package:rpmtranslator/API/APIs.dart';
 import 'package:rpmtranslator/API/RPMTWData.dart';
 import 'package:rpmtranslator/Account/Account.dart';
+import 'package:universal_html/html.dart';
 
 class CrowdinAuthHandler {
   /*
@@ -48,12 +48,11 @@ class CrowdinAuthHandler {
     );
     Map data = json.decode(response.body);
     if (response.statusCode == 200) {
-      Map account = Account.get();
-      Account.change({
-        "AccessToken": data["access_token"],
-        "RefreshToken": data['refresh_token'],
-        "UserID": account['UserID'].toString(),
-        "Expired": 'false'
+      window.localStorage.addAll({
+        "AccessToken": data["access_token"].toString(),
+        "RefreshToken": data['refresh_token'].toString(),
+        "UserID": Account.getUserID().toString(),
+        "Expired": false.toString()
       });
       return true;
     } else {
