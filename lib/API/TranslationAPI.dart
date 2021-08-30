@@ -12,17 +12,4 @@ class TranslationAPI {
     Map data = json.decode(response.body);
     return response.statusCode == 200 ? data['data']['translation'] : null;
   }
-
-  static Future<String?> TranslationWithYandex(String SrcText) async {
-    Response response = await post(
-        Uri.parse(
-            "https://translate.yandex.net/api/v1/tr.json/translate?id=eddea42b.61225856.e7d81e48.74722d74657874-6-0&srv=tr-text&lang=en-zh&reason=auto&format=text&yu=6401904741629630991"),
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: "text=$SrcText");
-
-    Map data = json.decode(response.body);
-    return response.statusCode == 200 ? data['text'][0] : null;
-  }
 }

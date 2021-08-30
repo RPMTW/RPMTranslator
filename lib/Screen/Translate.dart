@@ -1035,33 +1035,6 @@ class MachineTranslation extends StatelessWidget {
                     return Center(child: CircularProgressIndicator());
                   }
                 }),
-            FutureBuilder(
-                future: TranslationAPI.TranslationWithYandex(
-                    SelectStringInfo['text']),
-                builder: (context, AsyncSnapshot YandexSnapshot) {
-                  if (YandexSnapshot.hasData) {
-                    return Tooltip(
-                      message: "複製譯文",
-                      child: ListTile(
-                          leading: Image.network(
-                              'https://translate.yandex.com/icons/favicon.ico'),
-                          title: Text(YandexSnapshot.data
-                              .toString()
-                              .replaceAll("\\n", "\n")),
-                          subtitle: Text("由 Yandex 翻譯提供"),
-                          onTap: () {
-                            Clipboard.setData(ClipboardData(
-                                text: YandexSnapshot.data
-                                    .toString()
-                                    .replaceAll("\\n", "\n")));
-                          }),
-                    );
-                  } else if (YandexSnapshot.hasError) {
-                    return Text("取得 Yandex 翻譯失敗，錯誤原因 ${YandexSnapshot.error}");
-                  } else {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                })
           ],
         );
       } else {
