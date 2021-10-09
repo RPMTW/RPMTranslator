@@ -73,7 +73,7 @@ class RPMTWData {
   static Future<Map> getCurseForgeIndex(double VersionID) async {
     String GitVersion = VersionID == 1.16 ? "Original" : "Original-$VersionID";
     Response response = await get(Uri.parse(
-        "https://raw.githubusercontent.com/RPMTW/ResourcePack-Mod-zh_tw/$GitVersion/$VersionID/CurseForgeIndex.json"));
+        "https://raw.githubusercontent.com/RPMTW/ResourcePack-Mod-zh_tw/$GitVersion/$VersionID/ModInfo.json"));
     Map data = json.decode(response.body);
     return data;
   }

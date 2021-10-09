@@ -230,7 +230,7 @@ class ModsScreen_ extends State<ModsScreen> {
                                           String DirName =
                                               data['name'].toString();
                                           int CurseID = int.parse(
-                                              CurseIndex[DirName] ?? "0");
+                                              CurseIndex[DirName]['curseForgeID'] ?? "0");
                                           return FutureBuilder(
                                               future: RPMTWData
                                                   .getCurseForgeAddonInfo(
