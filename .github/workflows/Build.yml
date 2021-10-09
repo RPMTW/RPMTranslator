@@ -3,29 +3,18 @@ name: Build
 on:
   push:
     branches:
-    - main
-    
+      - main
+
   workflow_dispatch:
 
 jobs:
   Web:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: subosito/flutter-action@v1
-      with:
-       channel: 'dev'
-    - run: flutter pub get
-    - run: flutter build web --web-renderer html --release
-    - run: rm -rf ${{ github.workspace }}/docs*
-    - run: cp -r ${{ github.workspace }}/build/web ${{ github.workspace }}/docs
-    - run: echo translator.rpmtw.ga >> "${{ github.workspace }}/docs/CNAME"
-
-    - name: "Update File"
-      run: |
-        git config --global user.email "rpmtw666@gmail.com.com"
-        git config --global user.name "翻譯網站更新機器人"
-        git add ${{ github.workspace }}/docs
-        git commit -m "Update Website"
-        git push origin HEAD:${{ github.ref }}
-      shell: pwsh
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: master
+      - uses: bluefireteam/flutter-gh-pages@v7
+        with:
+          webRenderer: html

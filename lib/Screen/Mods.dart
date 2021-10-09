@@ -62,10 +62,7 @@ class ModsScreen_ extends State<ModsScreen> {
                 ),
                 TextButton(
                   onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (context) =>
-                            TranslateScreen(FileID: null, FileName: null));
+                    showDialog(context: context, builder: (context) => TranslateScreen(FileID: null, FileName: null));
                     String test;
                   },
                   child: Text(
@@ -93,12 +90,10 @@ class ModsScreen_ extends State<ModsScreen> {
                       decoration: InputDecoration(
                         hintText: "請輸入 $SortItem",
                         enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.white12, width: 3.0),
+                          borderSide: BorderSide(color: Colors.white12, width: 3.0),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.lightBlue, width: 3.0),
+                          borderSide: BorderSide(color: Colors.lightBlue, width: 3.0),
                         ),
                         contentPadding: EdgeInsets.zero,
                         border: InputBorder.none,
@@ -110,13 +105,9 @@ class ModsScreen_ extends State<ModsScreen> {
                       width: 12,
                     ),
                     ElevatedButton(
-                      style: new ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              Colors.deepPurpleAccent)),
+                      style: new ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.deepPurpleAccent)),
                       onPressed: () {
-                        ModPageController.animateToPage(0,
-                            curve: Curves.easeOut,
-                            duration: const Duration(milliseconds: 300));
+                        ModPageController.animateToPage(0, curve: Curves.easeOut, duration: const Duration(milliseconds: 300));
                         setState(() {});
                       },
                       child: Text(
@@ -140,13 +131,10 @@ class ModsScreen_ extends State<ModsScreen> {
                           style: TextStyle(color: Colors.white),
                           onChanged: (String? newValue) {
                             VersionItem = newValue.toString();
-                            ModPageController.animateToPage(0,
-                                curve: Curves.easeOut,
-                                duration: const Duration(milliseconds: 300));
+                            ModPageController.animateToPage(0, curve: Curves.easeOut, duration: const Duration(milliseconds: 300));
                             setState(() {});
                           },
-                          items: VersionItems.map<DropdownMenuItem<String>>(
-                              (String value) {
+                          items: VersionItems.map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
                               child: Text(
@@ -178,8 +166,7 @@ class ModsScreen_ extends State<ModsScreen> {
                             SortItem = newValue.toString();
                             setState(() {});
                           },
-                          items: SortItems.map<DropdownMenuItem<String>>(
-                              (String value) {
+                          items: SortItems.map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
                               alignment: Alignment.center,
@@ -203,8 +190,7 @@ class ModsScreen_ extends State<ModsScreen> {
           ),
           Container(
               child: FutureBuilder(
-                  future:
-                      RPMTWData.getCurseForgeIndex(double.parse(VersionItem)),
+                  future: RPMTWData.getCurseForgeIndex(double.parse(VersionItem)),
                   builder: (context, AsyncSnapshot<Map> CurseIndexSnapshot) {
                     if (CurseIndexSnapshot.hasData) {
                       Map CurseIndex = CurseIndexSnapshot.data!;
@@ -214,79 +200,57 @@ class ModsScreen_ extends State<ModsScreen> {
                           itemBuilder: (context, int Page_) {
                             Page = Page_;
                             return FutureBuilder(
-                                future: CrowdinAPI.getMods(VersionItem,
-                                    SearchController.text, Page_, SortItem),
+                                future: CrowdinAPI.getMods(VersionItem, SearchController.text, Page_, SortItem),
                                 builder: (context, AsyncSnapshot snapshot) {
-                                  if (snapshot.hasData &&
-                                      snapshot.data is List) {
+                                  if (snapshot.hasData && snapshot.data is List) {
                                     return ListView.builder(
                                         shrinkWrap: true,
                                         controller: ModScrollController,
                                         itemCount: snapshot.data.length,
                                         itemBuilder: (context, int Index) {
                                           ModListLength = snapshot.data.length;
-                                          Map data =
-                                              snapshot.data[Index]['data'];
-                                          String DirName =
-                                              data['name'].toString();
-                                          int CurseID = int.parse(
-                                              CurseIndex[DirName]['curseForgeID'] ?? "0");
+                                          Map data = snapshot.data[Index]['data'];
+                                          String DirName = data['name'].toString();
+                                          int CurseID = CurseIndex.containsKey(DirName) ? CurseIndex[DirName]['curseForgeID'] : 0;
                                           return FutureBuilder(
-                                              future: RPMTWData
-                                                  .getCurseForgeAddonInfo(
-                                                      CurseID),
-                                              builder: (context,
-                                                  AsyncSnapshot<Map>
-                                                      CurseAddonSnapshot) {
-                                                if (CurseAddonSnapshot
-                                                    .hasData) {
-                                                  bool IsCurseMod =
-                                                      CurseAddonSnapshot.data !=
-                                                              {} &&
-                                                          CurseIndex
-                                                              .containsKey(
-                                                                  DirName);
+                                              future: RPMTWData.getCurseForgeAddonInfo(CurseID),
+                                              builder: (context, AsyncSnapshot<Map> CurseAddonSnapshot) {
+                                                if (CurseAddonSnapshot.hasData) {
+                                                  bool IsCurseMod = CurseAddonSnapshot.data != {} && CurseIndex.containsKey(DirName);
                                                   return Column(
                                                     children: [
                                                       SizedBox(height: 5),
                                                       ListTile(
                                                           leading: Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
+                                                            mainAxisSize: MainAxisSize.min,
                                                             children: [
                                                               Container(
                                                                 width: 50,
                                                                 height: 50,
-                                                                child:
-                                                                    ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              100.0),
+                                                                child: ClipRRect(
+                                                                  borderRadius: BorderRadius.circular(100.0),
                                                                   child: FutureBuilder(
                                                                       future: CrowdinAPI.getProgressByDirectory(data['id']),
                                                                       builder: (context, AsyncSnapshot snapshot) {
-                                                                        if (snapshot
-                                                                            .hasData) {
-                                                                          return Stack(
-                                                                              children: [
-                                                                                RotatedBox(
-                                                                                  quarterTurns: 3,
-                                                                                  child: LinearProgressIndicator(
-                                                                                    color: Colors.blue,
-                                                                                    value: snapshot.data,
-                                                                                    minHeight: 50,
-                                                                                  ),
-                                                                                ),
-                                                                                Positioned(
-                                                                                  child: Text("${(snapshot.data * 100).toInt()}%", textAlign: TextAlign.center),
-                                                                                  top: 15,
-                                                                                  left: 0,
-                                                                                  bottom: 15,
-                                                                                  right: 0,
-                                                                                )
-                                                                              ]);
+                                                                        if (snapshot.hasData) {
+                                                                          return Stack(children: [
+                                                                            RotatedBox(
+                                                                              quarterTurns: 3,
+                                                                              child: LinearProgressIndicator(
+                                                                                color: Colors.blue,
+                                                                                value: snapshot.data,
+                                                                                minHeight: 50,
+                                                                              ),
+                                                                            ),
+                                                                            Positioned(
+                                                                              child: Text("${(snapshot.data * 100).toInt()}%",
+                                                                                  textAlign: TextAlign.center),
+                                                                              top: 15,
+                                                                              left: 0,
+                                                                              bottom: 15,
+                                                                              right: 0,
+                                                                            )
+                                                                          ]);
                                                                         } else {
                                                                           return LinearProgressIndicator();
                                                                         }
@@ -299,42 +263,20 @@ class ModsScreen_ extends State<ModsScreen> {
                                                               SizedBox(
                                                                 width: 50,
                                                                 height: 50,
-                                                                child:
-                                                                    ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8.0),
-                                                                  child: Builder(
-                                                                      builder:
-                                                                          (context) {
+                                                                child: ClipRRect(
+                                                                  borderRadius: BorderRadius.circular(8.0),
+                                                                  child: Builder(builder: (context) {
                                                                     if (IsCurseMod) {
-                                                                      Map?
-                                                                          CurseAddonInfo =
-                                                                          CurseAddonSnapshot
-                                                                              .data;
-                                                                      if (CurseAddonInfo!.containsKey(
-                                                                              'attachments') &&
-                                                                          CurseAddonInfo['attachments']
-                                                                              .isNotEmpty) {
-                                                                        return Image.network(
-                                                                            CurseAddonInfo['attachments'][0][
-                                                                                'thumbnailUrl'],
-                                                                            fit:
-                                                                                BoxFit.fill);
+                                                                      Map? CurseAddonInfo = CurseAddonSnapshot.data;
+                                                                      if (CurseAddonInfo!.containsKey('attachments') &&
+                                                                          CurseAddonInfo['attachments'].isNotEmpty) {
+                                                                        return Image.network(CurseAddonInfo['attachments'][0]['thumbnailUrl'],
+                                                                            fit: BoxFit.fill);
                                                                       } else {
-                                                                        return Icon(
-                                                                            Icons
-                                                                                .image,
-                                                                            size:
-                                                                                50);
+                                                                        return Icon(Icons.image, size: 50);
                                                                       }
                                                                     } else {
-                                                                      return Icon(
-                                                                          Icons
-                                                                              .image,
-                                                                          size:
-                                                                              50);
+                                                                      return Icon(Icons.image, size: 50);
                                                                     }
                                                                   }),
                                                                 ),
@@ -343,46 +285,27 @@ class ModsScreen_ extends State<ModsScreen> {
                                                           ),
                                                           title: Text(DirName),
                                                           onTap: () {
-                                                            int CrowdinDirID =
-                                                                data['id'];
+                                                            int CrowdinDirID = data['id'];
                                                             showDialog(
-                                                                routeSettings:
-                                                                    RouteSettings(
-                                                                        name:
-                                                                            "/mods/$CrowdinDirID/files"),
-                                                                context:
-                                                                    context,
-                                                                builder: (context) =>
-                                                                    FilesScreen(
-                                                                        DirID:
-                                                                            CrowdinDirID));
+                                                                routeSettings: RouteSettings(name: "/mods/$CrowdinDirID/files"),
+                                                                context: context,
+                                                                builder: (context) => FilesScreen(DirID: CrowdinDirID));
                                                           },
                                                           trailing: SizedBox(
                                                             width: 50,
                                                             height: 50,
                                                             child: Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .min,
+                                                              mainAxisSize: MainAxisSize.min,
                                                               children: [
-                                                                Builder(builder:
-                                                                    (context) {
+                                                                Builder(builder: (context) {
                                                                   if (IsCurseMod) {
-                                                                    Map?
-                                                                        CurseAddonInfo =
-                                                                        CurseAddonSnapshot
-                                                                            .data;
+                                                                    Map? CurseAddonInfo = CurseAddonSnapshot.data;
                                                                     return IconButton(
-                                                                      onPressed:
-                                                                          () {
-                                                                        utility.OpenUrl(
-                                                                            CurseAddonInfo!['websiteUrl']);
+                                                                      onPressed: () {
+                                                                        utility.OpenUrl(CurseAddonInfo!['websiteUrl']);
                                                                       },
-                                                                      icon: Icon(
-                                                                          Icons
-                                                                              .open_in_browser),
-                                                                      tooltip:
-                                                                          "在 CurseForge 檢視此模組",
+                                                                      icon: Icon(Icons.open_in_browser),
+                                                                      tooltip: "在 CurseForge 檢視此模組",
                                                                     );
                                                                   } else {
                                                                     return Container();
@@ -395,31 +318,23 @@ class ModsScreen_ extends State<ModsScreen> {
                                                     ],
                                                   );
                                                 } else {
-                                                  return Center(
-                                                      child:
-                                                          CircularProgressIndicator());
+                                                  return Center(child: CircularProgressIndicator());
                                                 }
                                               });
                                         });
-                                  } else if (snapshot.hasData &&
-                                      snapshot.data is String &&
-                                      snapshot.data == "Unauthorized") {
+                                  } else if (snapshot.hasData && snapshot.data is String && snapshot.data == "Unauthorized") {
                                     Account.setExpired(true);
                                     return AccountNone();
-                                  } else if (snapshot.hasData &&
-                                      snapshot.data is Map &&
-                                      snapshot.data.containsKey('error')) {
+                                  } else if (snapshot.hasData && snapshot.data is Map && snapshot.data.containsKey('error')) {
                                     return AlertDialog(
                                       title: Text("取得模組失敗"),
-                                      content: Text(
-                                          "錯誤原因: ${RPMTWData.TranslateErrorMessage(snapshot.data!['error']['message'])}"),
+                                      content: Text("錯誤原因: ${RPMTWData.TranslateErrorMessage(snapshot.data!['error']['message'])}"),
                                       actions: [OkClose()],
                                     );
                                   } else if (snapshot.hasError) {
                                     return Text(snapshot.error.toString());
                                   } else {
-                                    return Center(
-                                        child: CircularProgressIndicator());
+                                    return Center(child: CircularProgressIndicator());
                                   }
                                 });
                           });
@@ -435,10 +350,8 @@ class ModsScreen_ extends State<ModsScreen> {
                 IconButton(
                     tooltip: "上一頁",
                     onPressed: () async {
-                      await ModPageController.animateToPage(
-                          ModPageController.page!.toInt() - 1,
-                          curve: Curves.easeOut,
-                          duration: const Duration(milliseconds: 300));
+                      await ModPageController.animateToPage(ModPageController.page!.toInt() - 1,
+                          curve: Curves.easeOut, duration: const Duration(milliseconds: 300));
                       setChangePageState_(() {});
                     },
                     icon: Icon(Icons.navigate_before)),
@@ -456,10 +369,8 @@ class ModsScreen_ extends State<ModsScreen> {
                     tooltip: "下一頁",
                     onPressed: () async {
                       if (ModListLength < 20) return;
-                      await ModPageController.animateToPage(
-                          ModPageController.page!.toInt() + 1,
-                          curve: Curves.easeOut,
-                          duration: const Duration(milliseconds: 300));
+                      await ModPageController.animateToPage(ModPageController.page!.toInt() + 1,
+                          curve: Curves.easeOut, duration: const Duration(milliseconds: 300));
                       setChangePageState_(() {});
                     },
                     icon: Icon(Icons.navigate_next))
