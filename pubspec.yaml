@@ -23,6 +23,8 @@ dependencies:
   universal_io: ^2.0.4
   universal_html: ^2.0.8
   url_strategy: ^0.2.0
+  flutter_svg: ^1.0.3
+  rpmtw_api_client_flutter: ^1.0.8-dev.0
 
 dev_dependencies:
   flutter_test:
