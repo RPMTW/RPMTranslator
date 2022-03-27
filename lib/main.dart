@@ -9,7 +9,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'RPMTranslator - RPMTW 模組專屬翻譯器',
+        title: 'RPMTranslator',
         theme: ThemeData(brightness: Brightness.dark, fontFamily: 'font'),
         debugShowCheckedModeBanner: false,
         initialRoute: HomePage.route,

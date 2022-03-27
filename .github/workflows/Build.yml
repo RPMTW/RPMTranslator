@@ -12,9 +12,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v1
+      - name: Cache flutter
+        uses: actions/cache@v2
         with:
-          channel: master
-      - uses: bluefireteam/flutter-gh-pages@v7
+          path: /opt/hostedtoolcache/flutter
+          key: ${{ runner.os }}-flutter-2.12.0-4.1.pre
+      - uses: subosito/flutter-action@master
         with:
-          webRenderer: html
+          channel: beta
+          flutter-version: 2.12.0-4.1.pre
+      - uses: bluefireteam/flutter-gh-pages@v8

@@ -5,18 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "rpmtranslator",
+            "name": "RPMTranslator",
             "request": "launch",
             "type": "dart",
             "args": [
-                "--web-port=54091",
-                "--web-renderer",
-                "html"
+                "--web-port=54091"
             ],
             "externalConsole": true,
         },
         {
-            "name": "rpmtranslator (profile mode)",
+            "name": "RPMTranslator (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile",
